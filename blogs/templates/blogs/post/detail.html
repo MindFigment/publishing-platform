@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block content %}
+<section class="post-list">
+    <div>
+        <h1>{{ post.title }}</h1>
+        <p class="date">
+            Published {{ post.publish }} by {{ post.author }}
+        </p>
+    </div>
+    <div class="post-card">
+        {{ post.body|linebreaks }}
+    </div>
+</section>
+<!-- {% with comments.count as total_comments %}
+<h2>
+    {{ total_comments }} comment{{ total_comments|pluralize}}
+</h2>
+{% endwith %} -->
+
+
+<!-- <section class="comments">
+    <div class="leave-comment">
+        <h2>Leave a comment</h2>
+        <form method="post">
+            {{ comment_form.as_p }}
+            {% csrf_token %}
+            <p><input type="submit" value="Add comment"></p>
+        </form>
+    </div>
+    <div class="comment-list">
+        {% for comment in comments %}
+        <div class="comment-card">
+            <p class="comment-info">
+                Comment {{ forloop.counter }} by {{ comment.name }}
+                {{ comment.created }}
+            </p>
+            <p class="comment-body">
+                {{ comment.body|linebreaks}}
+            </p>
+        </div>
+        {% empty %}
+        <p>There are no comments yet :(</p>
+        {% endfor %}
+        {% if new_comment %}
+        <h2>Your comment has been added.</h2>
+        {% endif %}
+    </div>
+</section> -->
+
+{% endblock %}

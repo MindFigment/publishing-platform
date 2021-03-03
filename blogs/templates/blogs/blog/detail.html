@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}{{ blog.title }}{% endblock %}
+
+{% block content %}
+<header class="blog-detail">
+    {% if blog.image %}
+    <img src="{{ blog.image.url }}">
+    {% endif %}
+    <h2> {{ blog.title }} </h2>
+    <p> {{ blog.subtitle }} </p>
+</header>
+<section class="post-list">
+    {% for post in posts %}
+    <div class="post-card">
+        {% if post.image %}
+        <a href="{{ post.get_absolute_url }}">
+            <img src="{{ post.image.url }}">
+        </a>
+        {% endif %}
+        <h2>
+            <a href="{{ post.get_absolute_url }}">
+                {{ post.title }}
+            </a>
+        </h2>
+        <p class="date">
+            Published {{ post.publish }} by {{ post.author }}
+        </p>
+        {{ post.body|truncatewords:30|linebreaks }}
+    </div>
+    {% endfor %}
+</section>
+<!-- {% include "pagination.html" with page=posts %} -->
+{% endblock %}
