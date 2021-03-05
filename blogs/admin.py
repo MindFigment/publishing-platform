@@ -1,11 +1,11 @@
 from django.contrib import admin
 
-from .models import Blog, Post
+from .models import Blog, Post, FollowRelationship
 
 
 @admin.register(Blog)
 class BlogAdmin(admin.ModelAdmin):
-    list_display = ('title', 'subtitle', 'slug', 'is_active')
+    list_display = ('title', 'subtitle', 'slug', 'author', 'is_active')
     prepopulated_fields = {'slug': ('title',)}
 
 
@@ -18,3 +18,9 @@ class PostAdmin(admin.ModelAdmin):
     raw_id_fields = ('blog',)
     date_hierarchy = 'publish'
     ordering = ('status', 'publish')
+
+
+@admin.register(FollowRelationship)
+class FollowRelationshipAdmin(admin.ModelAdmin):
+    list_display = ('profile', 'blog')
+    # raw_id_fields = ('profile', 'blog')

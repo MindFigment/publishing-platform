@@ -1,5 +1,5 @@
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 
@@ -80,3 +80,12 @@ def edit(request):
                   'account/edit.html',
                   {'user_form': user_form,
                    'profile_form': profile_form})
+
+
+def profile_detail(request, username):
+    profile = Profile.objects.select_related('user').get(user__username=username,
+                                                         user__is_active=True)
+    print(profile)
+    return render(request,
+                  'account/profile/detail.html',
+                  {'profile': profile})

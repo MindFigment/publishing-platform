@@ -3,6 +3,8 @@ from django.utils import timezone
 from django.urls import reverse
 from django.contrib.auth.models import User
 
+from account.models import Profile
+
 
 class IsActiveManager(models.Manager):
     def get_queryset(self):
@@ -11,10 +13,9 @@ class IsActiveManager(models.Manager):
 
 def get_blog_image_dir_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT / ...
-    return 'blogs/{}-{}-{}/images/{}'.format(instance.title,
-                                             instance.author.first_name,
-                                             instance.author.last_name,
-                                             filename)
+    return 'blogs/{}-{}/images/{}'.format(instance.title,
+                                          instance.author.user.username,
+                                          filename)
 
 
 def get_post_image_dir_path(instance, filename):
@@ -29,19 +30,30 @@ class Blog(models.Model):
     title = models.CharField(max_length=20)
     subtitle = models.CharField(max_length=100)
     slug = models.SlugField(max_length=255, unique=True)
-    author = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='blogs')
+    # author = models.ForeignKey(
+    #     Profile, on_delete=models.CASCADE, related_name='blogs')
     is_active = models.BooleanField(default=True)
     about = models.TextField()
     created = models.DateTimeField(auto_now_add=True)
     image = models.ImageField(upload_to=get_blog_image_dir_path,
                               blank=True)
 
+    author = models.ForeignKey(
+        Profile, on_delete=models.CASCADE, related_name='blogs')
+
+    followers = models.ManyToManyField(Profile,
+                                       through='FollowRelationship',
+                                       related_name='following',
+                                       symmetrical=False)
+
     objects = models.Manager()
     active = IsActiveManager()
 
     class Meta:
         ordering = ('created',)
+
+    def __str__(self):
+        return f'{self.title} ({self.author.user.get_username()})'
 
     def get_absolute_url(self):
         return reverse('blogs:blog_detail',
@@ -85,3 +97,21 @@ class Post(models.Model):
                        args=[self.publish.year,
                              self.publish.month,
                              self.publish.day, self.slug])
+
+
+class FollowRelationship(models.Model):
+    profile = models.ForeignKey(Profile,
+                                related_name='rel_from_set',
+                                on_delete=models.CASCADE)
+    blog = models.ForeignKey(Blog,
+                             related_name='rel_to_set',
+                             on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True,
+                                   db_index=True)
+
+    class Meta:
+        ordering = ('-created',)
+        unique_together = ('profile', 'blog')
+
+    def __str__(self):
+        return f'{self.profile} follows {self.blog} blog'

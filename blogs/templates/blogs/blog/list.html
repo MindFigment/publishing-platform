@@ -1,13 +1,23 @@
 {% extends "base.html" %}
+{% load thumbnail %}
 
-{% block title %}My Blog{% endblock %}
+{% block title %}Blogs{% endblock %}
 
 {% block content %}
-{% for blog in blogs %}
-<div>
-    <a href="{{ blog.get_absolute_url }}">
-        {{ blog.title }} - {{ blog.author.first_name }} {{ blog.author.last_name }}
-    </a>
+<h1>Blogs</h1>
+<div id="people-list">
+    {% for blog in blogs %}
+    <div class="user">
+        <a href="{{ blog.get_absolute_url }}">
+            <img src="{% thumbnail blog.image 140x140 crop %}">
+            <!-- <img src="{{ blog.image|thumbnail_url:'avatar' }}" alt="" /> -->
+        </a>
+        <div class="info">
+            <a href="{{ blog.get_absolute_url }}" class="title">
+                {{ blog.title }}
+            </a>
+        </div>
+    </div>
+    {% endfor %}
 </div>
-{% endfor %}
 {% endblock %}

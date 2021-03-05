@@ -9,7 +9,30 @@
     {% endif %}
     <h2> {{ blog.title }} </h2>
     <p> {{ blog.subtitle }} </p>
+    {% if blog.about %}
+    <p> About blog: {{ blog.about|linebreaks }} </p>
+    {% endif %}
+    {% if blog.author.about %}
+    <p> About me: {{ blog.author.about|linebreaks }} </p>
+    {% endif %}
+    <a href="{{ blog.author.get_absolute_url }}"> By: {{ blog.author.user.get_username }}</a></p>
+    {% with total_followers=blog.followers.count %}
+    <div>
+        <span class="count">
+            <span class="total">{{ total_followers }}</span>
+            follower{{ total_followers|pluralize }}
+        </span>
+        <a href="#" data-id="{{ blog.id }}" data-action="{% if request.user.profile in blog.followers.all %}un{% endif %}follow" class="follow button">
+            {% if request.user.profile not in blog.followers.all %}
+            Follow
+            {% else %}
+            Unfollow
+            {% endif %}
+        </a>
+    </div>
+    {% endwith %}
 </header>
+
 <section class="post-list">
     {% for post in posts %}
     <div class="post-card">
@@ -31,4 +54,48 @@
     {% endfor %}
 </section>
 <!-- {% include "pagination.html" with page=posts %} -->
+{% endblock %}
+
+{% block javascript %}
+<script>
+    $(document).ready(function () {
+        $('a.follow').click(function (e) {
+            let token = '{{ csrf_token }}';
+            console.log(token)
+            e.preventDefault();
+            $.ajax({
+                type: 'POST',
+                headers: { 'X-CSRFToken': token },
+                url: '{% url "blogs:blog_follow" %}',
+                data: {
+                    id: $(this).data('id'),
+                    action: $(this).data('action'),
+
+                },
+                success: function (data) {
+                    if (data['status'] == 'ok') {
+                        let previous_action = $('a.follow').data('action');
+
+                        // toggle data-action
+                        $('a.follow').data('action',
+                            previous_action === 'follow' ? 'unfollow' : 'follow'
+                        );
+                        // toggle link text
+                        $('a.follow').text(
+                            previous_action == 'follow' ? 'Unfollow' : 'Follow'
+                        );
+
+                        // update total followers
+                        let previous_followers = parseInt(
+                            $('span.count .total').text()
+                        );
+                        $('span.count .total').text(
+                            previous_action == 'follow' ? previous_followers + 1 : previous_followers - 1
+                        );
+                    }
+                }
+            });
+        });
+    });
+</script>
 {% endblock %}

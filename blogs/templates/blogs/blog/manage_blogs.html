@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Your blogs{% endblock %}
+
+{% block content %}
+<h2>Active blogs</h2>
+{% for blog in active_blogs %}
+<div>
+  <a href="{{ blog.get_absolute_url }}">
+    {{ blog.title }} - {{ blog.author.first_name }} {{ blog.author.last_name }}
+  </a>
+  <button type="button">Inactivate</button>
+</div>
+{% endfor %}
+
+<h2>Inactive blogs</h2>
+{% for blog in inactive_blogs %}
+<div>
+  <a href="{{ blog.get_absolute_url }}">
+    {{ blog.title }} - {{ blog.author.first_name }} {{ blog.author.last_name }}
+  </a>
+  <button type="button">Activate</button>
+</div>
+{% endfor %}
+
+<h2>New blog</h2>
+<div><a href="{% url 'blogs:new_blog' %}">Create</a></div>
+{% endblock %}
+
+{% block javascript %}
+<script>
+  $(document).ready(function () {
+    let
+  })
+</script>
+{% endblock %}

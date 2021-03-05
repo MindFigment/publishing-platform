@@ -235,11 +235,11 @@ ul.messages li a.close {
 
 /* images */
 
-.image-preview, .image-detail {
+/* .image-preview, .image-detail {
     max-width: 300px;
     float: left;
     margin: 0 20px 20px 0;
-}
+} */
 
 .image-detail {
     margin-top: 20px;
@@ -269,17 +269,17 @@ a.like, a.follow {
 
 #image-list .image {
     float: left;
-    width: 220px;
-    height: 300px;
+    /* width: 220px;
+    height: 300px; */
     margin: 0 10px 10px 10px;
     border-top: 8px solid #12c064;
     background: #eee;
 }
 
-#image-list img {
+/* #image-list img {
     width: 220px;
     height: 220px;
-}
+} */
 
 #image-list .info {
     padding: 10px;
@@ -305,14 +305,14 @@ a.like, a.follow {
 /* users */
 
 #people-list img {
-    width: 180px;
-    height: 180px;
+    /* width: 180px;
+    height: 180px; */
     border-radius: 50%;
     margin-bottom: 20px;
 }
 
 #people-list .user {
-    width: 180px;
+    /* width: 180px; */
     float: left;
     overflow: auto;
     padding: 10px;
