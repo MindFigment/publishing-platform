@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block title %}New blog{% endblock %}
+
+{% block content %}
+<h1>New blog</h1>
+<p>Please, sign up using the following form:</p>
+<form method="post" enctype="multipart/form-data">
+  {{ blog_form.as_p }}
+  {% csrf_token %}
+  <p><input type="submit" value="New blog"></p>
+</form>
+{% endblock %}

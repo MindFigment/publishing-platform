@@ -6,7 +6,7 @@
 {% for blog in blogs %}
 <div>
     <a href="{{ blog.get_absolute_url }}">
-        {{ blog.title }} - {{ blog.first_name }} {{ blog.last_name }}
+        {{ blog.title }} - {{ blog.author.first_name }} {{ blog.author.last_name }}
     </a>
 </div>
 {% endfor %}

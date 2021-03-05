@@ -1,32 +1,73 @@
 {% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
+    <meta charset="utf-8" />
     <title>{% block title %}{% endblock %}</title>
-    <link href="{% static 'css/blogs.css' %}" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="{% static '/css/base.css' %}" rel="stylesheet">
+    {% block css %}{% endblock %}
 </head>
 
 <body>
-    <nav>
-        <div class="metabar">
-            <a href="{% url 'blogs:blog_list' %}">blogs</a>
+    {% block header %}
+    <header class="main-header">
+        <div class="nav">
+            <a href="{% url 'blogs:blog_list' %}" class="logo-wrapper"><img src="{% static '/img/logo.png' %}" alt="logo" /></a>
+            <a href="{% url 'blogs:blog_list' %}">Blogs</a>
+            <a href="{% url 'blogs:blog_list' %}">Blogs</a>
+            <a href="{% url 'blogs:blog_list' %}" class="move-right">Blogs</a>
+            <a href="{% url 'blogs:blog_list' %}">Blogs</a>
+            <span class="user">
+                {% if request.user.is_authenticated %}
+                <div class="hero-wrapper"><img id="hero" src="{% static '/img/hero.jpg' %}" alt="hero" /></div>
+                {% else %}
+                <!-- <button id="btn-login" type="button">Login</button> -->
+                <a href="{% url 'login' %}">Login</a>
+                {% endif %}
+            </span>
         </div>
-        <span class="user">
-            {% if request.user.is_authenticated %}
-            Hello {{ request.user.username }},
-            <a href="{% url 'logout' %}">Logout</a>
-            {% else %}
-            <a href="{% url 'login' %}">Log-in</a>
-            {% endif %}
-        </span>
-        <span> section: {{ section }} </span>
-        <span {% if section == "dashboard" %} class="selected" {% endif %}> DAAASHBOARD</span>
-    </nav>
+        <!-- <span {% if section == "dashboard" %} class="selected" {% endif %}> DAAASHBOARD</span> -->
+    </header>
+    {% endblock %}
+
     <main id="content">
         {% block content %}
         {% endblock %}
     </main>
+
+    <div id="menu-popup">
+        <ul class="menu-list">
+            <li>
+                <div>
+                    <div class="asd">{{ request.user.username }}</div>
+                </div>
+            </li>
+            <li>
+                <div><a href="#">Write a story</a></div>
+            </li>
+            <li>
+                <div><a href="#">Stories</a></div>
+            </li>
+            <li>
+                <div><a href="{% url 'edit' %}">Settings</a></div>
+            </li>
+            <li>
+                <div><a href="{% url 'password_change' %}">Password change</a></div>
+            </li>
+            <li>
+                <div><a href="{% url 'password_reset' %}">Password reset</a></div>
+            </li>
+            <li>
+                <div><a href="{% url 'logout' %}">Sign out</a></div>
+            </li>
+        </ul>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+    <script src="{% static 'js/popup_menu.js' %}"></script>
+    {% block javascript %}{% endblock %}
 </body>
 
 </html>

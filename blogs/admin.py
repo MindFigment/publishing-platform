@@ -5,9 +5,8 @@ from .models import Blog, Post
 
 @admin.register(Blog)
 class BlogAdmin(admin.ModelAdmin):
-    list_display = ('title', 'subtitle', 'first_name',
-                    'last_name', 'slug', 'is_active')
-    prepopulated_fields = {'slug': ('first_name', 'last_name', 'title')}
+    list_display = ('title', 'subtitle', 'slug', 'is_active')
+    prepopulated_fields = {'slug': ('title',)}
 
 
 @admin.register(Post)
