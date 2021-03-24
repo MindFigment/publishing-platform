@@ -1,20 +1,27 @@
-{% extends "base.html" %}
+{% extends "blogs_base.html" %}
 
 {% block title %}{{ blog.title }}{% endblock %}
 
 {% block content %}
-<header class="blog-detail">
+<section class="blog-detail">
     {% if blog.image %}
-    <img src="{{ blog.image.url }}">
+        <div class="blog-image">
+            <img src="{{ blog.image.url }}">
+        </div>
     {% endif %}
-    <h2> {{ blog.title }} </h2>
-    <p> {{ blog.subtitle }} </p>
+    <div class="blog-title">
+        <h2> {{ blog.title }} </h2>
+        <p> {{ blog.subtitle }} </p>
+    </div>
     {% if blog.about %}
-    <p> About blog: {{ blog.about|linebreaks }} </p>
+        <section class="blog-about">
+            <h2>About blog</h2>
+            <p> {{ blog.about|linebreaks }} </p>
+            {% endif %}
+            {% if blog.author.about %}
+        </section>
     {% endif %}
-    {% if blog.author.about %}
     <p> About me: {{ blog.author.about|linebreaks }} </p>
-    {% endif %}
     <a href="{{ blog.author.get_absolute_url }}"> By: {{ blog.author.user.get_username }}</a></p>
     {% with total_followers=blog.followers.count %}
     <div>
@@ -33,30 +40,17 @@
         {% endif %}
     </div>
     {% endwith %}
-</header>
-
-<section class="post-list">
-    <h2>Posts</h2>
-    {% for post in posts %}
-    <div class="post-card">
-        {% if post.image %}
-        <a href="{{ post.get_absolute_url }}">
-            <img src="{{ post.image.url }}">
-        </a>
-        {% endif %}
-        <h2>
-            <a href="{{ post.get_absolute_url }}">
-                {{ post.title }}
-            </a>
-        </h2>
-        <p class="date">
-            Published {{ post.publish }} by {{ post.author }}
-        </p>
-        {{ post.body|truncatewords:30|linebreaks }}
-    </div>
-    {% endfor %}
 </section>
-<!-- {% include "pagination.html" with page=posts %} -->
+
+<section>
+    <h2>Posts</h2>
+    <div class="post-list">
+        {% for post in posts %}
+            {% post_card post %}
+        {% endfor %}
+    </div>
+</section>
+
 {% endblock %}
 
 {% block javascript %}

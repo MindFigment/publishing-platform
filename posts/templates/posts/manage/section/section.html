@@ -1,0 +1,20 @@
+{% if section_type == 'title' %}
+<div class="story-title">{{ section_object.title }}</div>
+
+{% elif section_type == 'subtitle' %}
+<div class="story-subtitle">{{ section_object.subtitle }}</div>
+
+{% elif section_type == 'image' %}
+<img src="{{ section_object.file.url }}" class="post-image">
+
+{% elif section_type == 'text' %}
+<div class="story-text">{{ section_object.text|linebreaks }}</div>
+
+{% elif section_type == 'citation' %}
+<!-- <blockquote></blockquote> -->
+<div class="story-citation">{{ section_object.citation }}</div>
+
+{% else %}
+<div>Something went wrong! {{ section_object }} {{ section_type }}</div>
+
+{% endif %}

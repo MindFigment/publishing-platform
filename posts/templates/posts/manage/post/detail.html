@@ -3,7 +3,7 @@
 {% block title %}{{ post.title }}{% endblock %}
 
 {% block content %}
-<section class="post-list">
+<!-- <section class="post-list">
     <div>
         <h1>{{ post.title }}</h1>
         <p class="date">
@@ -13,7 +13,13 @@
     <div class="post-card">
         {{ post.body|linebreaks }}
     </div>
-</section>
+</section> -->
+
+<div class="story-sections">
+    {% for section in post.sections.all %}
+        {% render_section section %}
+    {% endfor %}
+</div>
 <!-- {% with comments.count as total_comments %}
 <h2>
     {{ total_comments }} comment{{ total_comments|pluralize}}

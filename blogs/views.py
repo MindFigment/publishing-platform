@@ -46,7 +46,7 @@ def blog_ajax_list(request):
 def blog_detail(request, slug):
     blog = Blog.objects.get(slug=slug)
     # posts = blog.posts.filter(status='published')
-    posts = blog.posts.all()
+    posts = blog.posts.all().prefetch_related('sections')
     return render(request, 'blogs/blog/detail.html',
                   {'blog': blog,
                    'posts': posts})

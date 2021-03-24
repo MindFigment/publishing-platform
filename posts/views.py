@@ -214,78 +214,13 @@ def create_post(request, blog_id):
                    'image_formset': image_formset})
 
 
-class PostSectionListView(TemplateResponseMixin, View):
-    template_name = 'posts/manage/post/section_list.html'
-
-    def get(self, request, post_id):
-        post = get_object_or_404(Post,
-                                 id=post_id)
-        return self.render_to_response({'post': post})
-
-
-class SectionCreateUpdateView(TemplateResponseMixin, View):
-    p = None
-    model = None
-    obj = None
-    template_name = 'posts/manage/section/form.html'
-
-    def get_model(self, model_name):
-        print('\n\nGET MODEL', model_name)
-        if model_name in ['text', 'video', 'image']:
-            return apps.get_model(app_label='posts',
-                                  model_name=model_name)
-        return None
-
-    def get_form(self, model, *args, **kwargs):
-        print('GET FORM')
-        Form = modelform_factory(
-            model, exclude=['onwer', 'order', 'created', 'updated'])
-        return Form(*args, **kwargs)
-
-    def dispatch(self, request, post_id, model_name, id=None):
-        print('DISPATCH')
-        self.p = get_object_or_404(Post,
-                                   id=post_id)
-        self.model = self.get_model(model_name)
-        if id:
-            self.obj = get_object_or_404(self.model,
-                                         id=id)
-        return super().dispatch(request, post_id, model_name, id)
-
-    def get(self, request, post_id, model_name, id=None):
-        print(request)
-        form = self.get_form(self.model, instance=self.obj)
-        return self.render_to_response({'form': form,
-                                        'object': self.obj})
-
-    def post(self, request, post_id, model_name, id=None):
-        form = self.get_form(self.model,
-                             instance=self.obj,
-                             data=request.POST,
-                             files=request.FILES)
-        if form.is_valid():
-            obj = form.save(commit=False)
-            obj.p = post_id
-            obj.save()
-            if not id:
-                # new section
-                Section.objects.create(post=self.p, item=obj)
-        return redirect('posts:post_section_list', self.p.id)
-
-
-class SectionDeleteView(View):
-    def post(self, request, id):
-        section = get_object_or_404(Section,
-                                    id=id)
-        post_ = section.post
-        section.item.delete()
-        section.delete()
-        return redirect('posts:post_section_list', post_.id)
-
-
 def post_detail(request, year, month, day, slug):
-    post = get_object_or_404(Post, slug=slug, status='published',
-                             publish__year=year, publish__month=month, publish__day=day)
+    # status = 'published'
+    post = get_object_or_404(Post.objects.prefetch_related('sections').all(),
+                             slug=slug,
+                             publish__year=year,
+                             publish__month=month,
+                             publish__day=day)
 
     # comments = post.comments.filter(active=True)
     # new_comment = None

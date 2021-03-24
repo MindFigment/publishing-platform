@@ -1,0 +1,24 @@
+{% load thumbnail %}
+
+
+<div>
+  <a href="{{ post.get_absolute_url }}">
+    <div class="post-card">
+      <div class="post-card__avatar">
+          {% thumbnail image 300x190 crop="smart" as im %}
+          <img src="{{ im.url }}">
+      </div>
+      <div class="post-card__content">
+        <div class="post-title">
+          {{ title }}
+        </div>
+        <div class="post-first-paragraph">
+          {{ first_paragraph|truncatechars:215 }}
+        </div>
+        <div class="post-published">
+          Published {{ post.publish }}
+        </div>
+      </div>
+    </div>
+  </a>
+</div>
