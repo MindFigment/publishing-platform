@@ -1,36 +1,83 @@
-{% extends "base.html" %}
+{% extends "blogs_base.html" %}
+{% load thumbnail %}
 
 {% block title %}Your blogs{% endblock %}
 
 {% block content %}
-<h2>Active blogs</h2>
-{% for blog in active_blogs %}
-<div>
-  <a href="{{ blog.get_absolute_url }}">
-    {{ blog.title }} - {{ blog.author.first_name }} {{ blog.author.last_name }}
-  </a>
-  <button type="button">Inactivate</button>
-</div>
-{% endfor %}
 
-<h2>Inactive blogs</h2>
-{% for blog in inactive_blogs %}
-<div>
-  <a href="{{ blog.get_absolute_url }}">
-    {{ blog.title }} - {{ blog.author.first_name }} {{ blog.author.last_name }}
-  </a>
-  <button type="button">Activate</button>
-</div>
-{% endfor %}
+{% if messages %}
+<ul class="messages">
+  {% for message in messages %}
+  <li{% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
 
-<h2>New blog</h2>
-<div><a href="{% url 'blogs:new_blog' %}">Create</a></div>
+<section class="new-blog">
+  <h2>New blog</h2>
+  <a href="{% url 'blogs:new_blog' %}">
+    <div>
+      New Blog
+    </div>
+  </a>
+</section>
+
+<section class="section">
+  <h2>Active blogs</h2>
+  <div class="blog-list">
+    {% for blog in active_blogs %}
+    <div class="blog-card">
+      <div class="blog-card__avatar">
+        <a href="{{ blog.get_absolute_url }}">
+          {% thumbnail blog.image 200x200 crop="smart" as im %}
+          <img src="{{ im.url }}">
+        </a>
+      </div>
+      <div class="blog-card__content">
+        <div class="blog-title">
+          {{ blog.title }}
+        </div>
+        <div class="blog-subtitle">
+          {{ blog.subtitle }}
+        </div>
+        <a href="{% url 'blogs:edit_blog' blog.slug %}" class="blog-card__button">Edit</a>
+        <a href="{% url 'posts:post_create' blog.id %}" class="blog-card__button">Write story</a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="section">
+  <h2>Inactive blogs</h2>
+  {% for blog in inactive_blogs %}
+  <div class="blog-card">
+    <div class="blog-card__avatar">
+      <a href="{{ blog.get_absolute_url }}">
+        {% thumbnail blog.image 200x200 crop="smart" as im %}
+        <img src="{{ im.url }}">
+      </a>
+    </div>
+    <div class="blog-card__content">
+      <div class="blog-title">
+        {{ blog.title }}
+      </div>
+      <div class="blog-subtitle">
+        {{ blog.subtitle }}
+      </div>
+      <a href="{% url 'blogs:edit_blog' blog.slug %}" class="blog-card__button">Edit</a>
+      <a href="{% url 'posts:post_create' blog.id %}" class="blog-card__button">Write story</a>
+    </div>
+  </div>
+  {% endfor %}
+  </div>
+</section>
 {% endblock %}
 
 {% block javascript %}
 <script>
   $(document).ready(function () {
-    let
+    let x = 1;
   })
 </script>
 {% endblock %}

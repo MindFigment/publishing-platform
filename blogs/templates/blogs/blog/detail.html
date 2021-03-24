@@ -22,6 +22,7 @@
             <span class="total">{{ total_followers }}</span>
             follower{{ total_followers|pluralize }}
         </span>
+        {% if request.user.id != blog.author.user.id %}
         <a href="#" data-id="{{ blog.id }}" data-action="{% if request.user.profile in blog.followers.all %}un{% endif %}follow" class="follow button">
             {% if request.user.profile not in blog.followers.all %}
             Follow
@@ -29,11 +30,13 @@
             Unfollow
             {% endif %}
         </a>
+        {% endif %}
     </div>
     {% endwith %}
 </header>
 
 <section class="post-list">
+    <h2>Posts</h2>
     {% for post in posts %}
     <div class="post-card">
         {% if post.image %}

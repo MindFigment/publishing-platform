@@ -1,0 +1,25 @@
+{% extends "posts_base.html" %}
+
+{% block title %}My Posts{% endblock %}
+
+{% block content %}
+<h1>My Posts</h1>
+<div class="module">
+  {% for post in posts %}
+  <div class="course-info">
+    <h3>{{ post.title }}</h3>
+    <p>
+      <a href="{% url 'post_edit' post.id %}">Edit</a>
+      <a href="{% url 'post_delete' post.id %}">Delete</a>
+    </p>
+  </div>
+  {% empty %}
+  <p>You haven't created any posts yet.</p>
+  {% endfor %}
+  <p>
+    <a href="{% url 'post_create' %}" class="button">
+      Create new post
+    </a>
+  </p>
+</div>
+{% endblock %}

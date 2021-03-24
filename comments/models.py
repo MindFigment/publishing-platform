@@ -1,6 +1,6 @@
 from django.db import models
 
-from blogs.models import Post
+from posts.models import Post
 
 
 class Comment(models.Model):

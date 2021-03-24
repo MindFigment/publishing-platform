@@ -1,0 +1,40 @@
+{% extends "posts_base.html" %}
+{% load post %}
+
+{% block title %}
+Post {{ post.title }}
+{% endblock %}
+
+{% block content %}
+<div class="module">
+  <h2>Post {{ post.order|add:1 }}: {{ post.title }}</h2>
+  <h3>Post sections:</h3>
+  <div id="module-contents">
+    {% for section in post.sections.all %}
+    <div data-id="{{ section.id }}">
+      {% with item=section.item %}
+      <p>{{ item }} ({{ item|model_name }})</p>
+      <a href="{% url 'posts:post_section_update' post.id item|model_name item.id %}">
+        Edit
+      </a>
+      <form action="{% url 'posts:post_section_delete' section.id %}" method="post">
+        <input type="submit" value="Delete">
+        {% csrf_token %}
+      </form>
+      {% endwith %}
+    </div>
+    {% empty %}
+    <p>This post has no sections yet.</p>
+    {% endfor %}
+  </div>
+  <h3>Add new section:</h3>
+  <ul class="content-types">
+    <li><a href="{% url 'posts:post_section_create' post.id 'text' %}">
+        Text</a></li>
+    <li><a href="{% url 'posts:post_section_create' post.id 'image' %}">
+        Image</a></li>
+    <li><a href="{% url 'posts:post_section_create' post.id 'video' %}">
+        Video</a></li>
+  </ul>
+</div>
+{% endblock %}

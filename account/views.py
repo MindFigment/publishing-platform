@@ -1,10 +1,11 @@
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import render
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 
 from .models import Profile
 from .forms import LoginForm, UserRegistrationForm, UserEditForm, ProfileEditForm
+from blogs.models import FollowRelationship
 
 
 def user_login(request):
@@ -89,3 +90,14 @@ def profile_detail(request, username):
     return render(request,
                   'account/profile/detail.html',
                   {'profile': profile})
+
+
+def user_followers(request, username):
+    followers = FollowRelationship.objects.filter(
+        blog__author__user__username=username) \
+        .select_related('profile', 'blog') \
+        .order_by('-created')
+    return render(request,
+                  'account/profile/followers_list.html',
+                  {'author': followers[0].blog.author.user.username,
+                   'followers': followers})

@@ -1,0 +1,17 @@
+{% load thumbnail %}
+
+{% for blog in blogs %}
+<div class="image">
+  <a href="{{ blog.get_absolute_url }}">
+    {% thumbnail blog.image 140x140 crop="smart" as im %}
+    <a href="{{ blog.get_absolute_url }}">
+      <img src="{{ im.url }}">
+    </a>
+  </a>
+  <div class="info">
+    <a href="{{ blog.get_absolute_url }}" class="title">
+      {{ blog.title }}
+    </a>
+  </div>
+</div>
+{% endfor %}

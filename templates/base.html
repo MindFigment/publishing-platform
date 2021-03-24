@@ -8,6 +8,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link href="{% static '/css/base.css' %}" rel="stylesheet">
     {% block css %}{% endblock %}
+    <script src="https://code.jquery.com/jquery-3.5.0.js" defer></script>
+    <script src="{% static 'js/popup_menu.js' %}" defer></script>
+    {% block javascript %}{% endblock %}
 </head>
 
 <body>
@@ -64,10 +67,6 @@
             </li>
         </ul>
     </div>
-
-    <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
-    <script src="{% static 'js/popup_menu.js' %}"></script>
-    {% block javascript %}{% endblock %}
 </body>
 
 </html>
