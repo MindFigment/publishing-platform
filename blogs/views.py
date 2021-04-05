@@ -7,6 +7,7 @@ from django.contrib import messages
 
 from .models import Blog, FollowRelationship
 from .forms import NewBlogForm
+from tags.models import Tag
 from common.utils import unique_slugify
 from common.decorators import ajax_required
 # from comments.models import Comment
@@ -64,6 +65,9 @@ def new_blog(request):
             new_slug = unique_slugify(new_blog, [new_blog.title])
             print('new_slug', new_slug, new_blog.slug)
             new_blog.author = request.user.profile
+            blog_tags = blog_form.cleaned_data['tags']
+            blog_tags = Tag.tags.add(*blog_tags)
+            new_blog.tags.add(*blog_tags)
             # Save the Blog object
             new_blog.save()
             return render(request,
@@ -115,15 +119,24 @@ def edit_blog(request, slug):
         print(blog)
         blog_form = NewBlogForm(request.POST, request.FILES, instance=blog)
         if blog_form.is_valid():
+            # updated_blog = blog_form.save()
             updated_blog = blog_form.save(commit=False)
-            updated_slug = unique_slugify(updated_blog, [updated_blog.title])
-            print('updated slug', updated_slug)
+            # updated_slug = unique_slugify(updated_blog, [updated_blog.title])
+            # print('updated slug', updated_slug)
+            # blog_tags = blog_form.cleaned_data['tags']
+            # blog_tags = Tag.tags.add(*blog_tags)
+            # updated_blog.tags.add(*blog_tags)
+            # print('blog tags', blog_tags)
+            print(updated_blog)
+            print('updated blog', updated_blog.tags.all())
             updated_blog.save()
             message = f'{updated_blog.title} updated succesfully'
             messages.add_message(request, messages.SUCCESS, message)
             return redirect('blogs:manage_blogs')
     else:
         blog_form = NewBlogForm(instance=blog)
+        # print(blog)
+        # print(blog_form)
     return render(request,
                   'blogs/blog/edit_blog.html',
                   {'blog_form': blog_form})

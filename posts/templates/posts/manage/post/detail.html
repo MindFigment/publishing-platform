@@ -3,57 +3,94 @@
 {% block title %}{{ post.title }}{% endblock %}
 
 {% block content %}
-<!-- <section class="post-list">
-    <div>
-        <h1>{{ post.title }}</h1>
-        <p class="date">
-            Published {{ post.publish }} by {{ post.author }}
-        </p>
-    </div>
-    <div class="post-card">
-        {{ post.body|linebreaks }}
-    </div>
-</section> -->
 
 <div class="story-sections">
     {% for section in post.sections.all %}
         {% render_section section %}
     {% endfor %}
 </div>
-<!-- {% with comments.count as total_comments %}
-<h2>
-    {{ total_comments }} comment{{ total_comments|pluralize}}
-</h2>
-{% endwith %} -->
+
+<div class="similar"></div>
+
+{% endblock %}
+
+{% block javascript %}
+
+{{ post.slug|json_script:"post-data" }}
+<script type="text/javascript" defer>
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const post = JSON.parse(document.getElementById('post-data').textContent);
+
+        console.log('post', post);
+
+        const similarDiv = document.querySelector('.similar');
+        console.log(similarDiv);
+
+        function processSimilarPosts(posts) {
+             posts.forEach(postData => createPostCard(postData));
+        }
+
+        function createPostCard(postData) {
+            // const img = document.createElement('img');
+            // img.src = `data:image;base64,${postData.blog.image}`
+            postCardDiv = document.createElement('div');
+            postCardDiv.innerHTML = displayPostCard(postData); 
+            similarDiv.append(postCardDiv); 
+        }
+
+        function displayPostCard(postData) {
+            postTemplate = 
+            `
+            <div class="post-card">
+                <div class="post-card__avatar post-image">
+                    <a href="">
+                        <img src="data:image;base64,${postData.image}">
+                    </a>
+                </div>
+                <div class="post-card__content">
+                    <div class="post-title">
+                        <a href="${postData.url}">${postData.title}</a>
+                    </div>
+                    <div class="post-card__avatar author-image">
+                        <img src="data:image;base64,${postData.image}">
+                        <div>
+                            <div class="info">
+                                By <a href="${postData.url}"> 
+                                ${postData.author.username} </a>
+                                on <a href="${postData.blog.url}">
+                                ${postData.blog.title} </a>
+                            </div>
+                            <div class="post-published">${postData.publish}</div>
+                        </div>
+                    </div>
+                    <div class="post-first-paragraph">
+                        ${postData.text.slice(0, 200)}...
+                    </div>
+                    <div class="post-tags">
+                        tags: ${postData.tags.length !== 0 ? postData.tags : 'post not tagged'}
+                    </div>
+                </div>
+            </div>
+            `
+            return postTemplate;
+        }
 
 
-<!-- <section class="comments">
-    <div class="leave-comment">
-        <h2>Leave a comment</h2>
-        <form method="post">
-            {{ comment_form.as_p }}
-            {% csrf_token %}
-            <p><input type="submit" value="Add comment"></p>
-        </form>
-    </div>
-    <div class="comment-list">
-        {% for comment in comments %}
-        <div class="comment-card">
-            <p class="comment-info">
-                Comment {{ forloop.counter }} by {{ comment.name }}
-                {{ comment.created }}
-            </p>
-            <p class="comment-body">
-                {{ comment.body|linebreaks}}
-            </p>
-        </div>
-        {% empty %}
-        <p>There are no comments yet :(</p>
-        {% endfor %}
-        {% if new_comment %}
-        <h2>Your comment has been added.</h2>
-        {% endif %}
-    </div>
-</section> -->
+        fetch('http://localhost:8000/search/posts/similar?' + new URLSearchParams({
+            slug: post,
+            n: 4
+        }))
+            .then(res => res.json())
+            .then(rawPosts => Promise.all(rawPosts.map(p => JSON.parse(p))))
+            .then(posts => {
+                console.log(posts);
+                processSimilarPosts(posts);
+            })
+            .catch(err => console.error(err));
+    });
+    
+
+</script>
 
 {% endblock %}

@@ -1,36 +1,36 @@
 {% extends "posts_base.html" %}
 {% load static %}
 
-{% block css %}
-<link href="{% static '/css/write-story.css' %}" rel="stylesheet">
-{% endblock %}
-
 {% block title %}
 Blog {{ blog.title }} by {{ blog.author }}
 {% endblock %}
 
 {% block content %}
 <!-- <h1>Edit "{{ course.title }}"</h1> -->
-<section class="write_story">
+<section class="write-story">
   <h1>Blog {{ blog.title }} by {{ blog.author }}</h1>
   <h2 class="header">Story sections</h2>
-  <form class="form" action="{% url 'posts:post_create' blog.id %}" method="post" enctype="multipart/form-data">
+  <form id="story-form" action="{% url 'posts:post_create' blog.id %}" method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{ subtitle_formset.management_form }}
     {{ text_formset.management_form }}
     {{ citation_formset.management_form }}
     {{ image_formset.management_form }}
 
-    <div id="story-content">
+    <div>
+      {{ post_form }}
+    </div>
+
+    <div class="story-content">
 
       <div class="story-content__item">
         <!-- <div class="input-label">
           <label>{{ title_form.title.label }}</label>
         </div> -->
         <div class="item__wrapper">
-          <!-- {{ title_form.title }}
-          {{ title_form.order.as_hidden }} -->
-          {{ title_form }}
+          {{ title_form.title }}
+          {{ title_form.order }}
+          <!-- {{ title_form }} -->
         </div>
         <!-- <div>
           <input type="button" id="title-button-remove" value="X">
@@ -39,19 +39,23 @@ Blog {{ blog.title }} by {{ blog.author }}
     </div>
 
     <div id="empty-subtitle-form" style="display:none">
-      {{ subtitle_formset.empty_form }}
+      {{ subtitle_formset.empty_form.subtitle }}
+      {{ subtitle_formset.empty_form.order }}
     </div>
 
     <div id="empty-text-form" style="display:none">
-      {{ text_formset.empty_form }}
+      {{ text_formset.empty_form.text }}
+      {{ text_formset.empty_form.order }}
     </div>
 
     <div id="empty-citation-form" style="display:none">
-      {{ citation_formset.empty_form }}
+      {{ citation_formset.empty_form.citation }}
+      {{ citation_formset.empty_form.order }}
     </div>
 
     <div id="empty-image-form" style="display:none">
-      {{ image_formset.empty_form }}
+      {{ image_formset.empty_form.file }}
+      {{ image_formset.empty_form.order }}
       <div class="img-wrapper">
         <img id="id_image-__prefix__-src">
       </div>

@@ -34,7 +34,7 @@ def unique_slugify(instance, values, queryset=None, slug_field_name='slug', slug
         if num > max_num:
             raise Error(f'Over {max_num} slugs with the same base!')
 
-    setattr(instance, slug_field_name, slug)
+    # setattr(instance, slug_field_name, slug)
 
     return slug
 

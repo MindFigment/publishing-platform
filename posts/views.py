@@ -5,14 +5,12 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.forms.models import modelform_factory, modelformset_factory
 from django.apps import apps
 from django.urls.base import reverse
-from django.views.generic.base import TemplateResponseMixin, View
-from django.views.generic.edit import CreateView
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
 
 from .models import Citation, Image, Post, Section, Title, SubTitle, Text
 from blogs.models import Blog
-from .forms import TitleForm, SubTitleFormset, TextFormset, CitationFormset, ImageFormset
+from tags.models import Tag
+from .forms import PostForm, TitleForm, SubTitleFormset, TextFormset, CitationFormset, ImageFormset
 from common.utils import unique_slugify
 
 
@@ -30,13 +28,16 @@ def create_post(request, blog_id):
 
     if request.method == 'GET':
         print('\n\n\nGET\n', request.GET, '\n\n\n')
+        post_form = PostForm()
         title_form = TitleForm()
+        print(post_form, title_form)
         subtitle_formset = SubTitleFormset(prefix=SUBTITLE_PREFIX)
         text_formset = TextFormset(prefix=TEXT_PREFIX)
         citation_formset = CitationFormset(prefix=CITATION_PREFIX)
         image_formset = ImageFormset(prefix=IMAGE_PREFIX)
     elif request.method == 'POST':
         print('\n\n\nPOST\n', request.POST, request.FILES, '\n\n\n')
+        post_form = PostForm(request.POST)
         title_form = TitleForm(request.POST)
         subtitle_formset = SubTitleFormset(
             request.POST or None, prefix=SUBTITLE_PREFIX)
@@ -51,9 +52,13 @@ def create_post(request, blog_id):
         # print(title_form)
         # print('Subtitle formset:', subtitle_formset)
         # print(text_formset)
-        if title_form.is_valid() and subtitle_formset.is_valid() and text_formset.is_valid() and image_formset.is_valid() and citation_formset.is_valid():
+        if post_form.is_valid() and title_form.is_valid() and subtitle_formset.is_valid() and text_formset.is_valid() and image_formset.is_valid() and citation_formset.is_valid():
             # Create post
-            new_story = Post(blog=blog)
+            post_cd = post_form.cleaned_data
+            post_status = post_cd['status']
+            post_tags = post_cd['tags']
+            print('POST status:', post_status, ', tags:', post_tags)
+            new_story = Post(blog=blog, status=post_status)
             sections = []
 
             #############
@@ -161,7 +166,9 @@ def create_post(request, blog_id):
 
             try:
                 with transaction.atomic():
+                    post_tags = Tag.tags.add(*post_tags)
                     new_story.save()
+                    new_story.tags.add(*post_tags)
                     title_object.save()
                     print('saved title!', title_object.id)
                     print('transaction sections', sections)
@@ -193,6 +200,7 @@ def create_post(request, blog_id):
                 return render(request,
                               'posts/manage/post/write_story.html',
                               {'blog': blog,
+                               'post_form': post_form,
                                'title_form': title_form,
                                'subtitle_formset': subtitle_formset,
                                'text_formset': text_formset,
@@ -207,6 +215,7 @@ def create_post(request, blog_id):
     return render(request,
                   'posts/manage/post/write_story.html',
                   {'blog': blog,
+                   'post_form': post_form,
                    'title_form': title_form,
                    'subtitle_formset': subtitle_formset,
                    'text_formset': text_formset,

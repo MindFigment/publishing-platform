@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Search{% endblock %}
+
+{% block content %}
+  {% if query %}
+    <h1>Search results "{{ query }}"</h1>
+    <h3>
+      {% with results.count as total_results %}
+        Found {{ total_results }} result{{ total_results|pluralize }}
+      {% endwith %}
+    </h3>
+    
+    {% for result in results %}
+      <h4><a href="{{ result.get_absolute_url }}">{{ result.title }}</a></h4>
+        {{ result }}
+        {% empty %}
+      <p>There are no results for your query.</p>
+    {% endfor %}
+    <p><a href="{% url 'search:search' %}">Search again</a></p>
+  {% else %}
+    <h1>Search</h1>
+    <form method="get">
+      {{ search_form.query.label }}
+      {{ search_form.as_p }}
+      <input type="submit" value="Search">
+    </form>
+  {% endif %}
+{% endblock %}

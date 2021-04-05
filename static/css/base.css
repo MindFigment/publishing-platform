@@ -423,6 +423,10 @@ header.main-header .nav>* {
     overflow: auto;
 }
 
+.menu-list {
+    list-style-type: none;
+}
+
 #x {
     background: rgb(226, 250, 250);
     width: 300px;
@@ -457,6 +461,7 @@ header.main-header .move-right {
     width: 30px;
     height: 30px;
     border-radius: 50%;
+    cursor: pointer;
 }
 
 /**************************/

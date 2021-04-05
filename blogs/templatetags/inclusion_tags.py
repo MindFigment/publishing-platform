@@ -12,7 +12,6 @@ IMAGE_MODEL_NAME = Image._meta.model_name
 
 @register.inclusion_tag("blogs/post_card.html", takes_context=False)
 def post_card(post):
-
     post_sections = post.sections.order_by('order')
     post_title = post_sections.get(content_type__model=TITLE_MODEL_NAME)
     print('post title:', post_title.content_object.title)

@@ -4,9 +4,12 @@ from django.utils import timezone
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.template.loader import render_to_string
+from django.db.models import OuterRef, Subquery
 
 from blogs.models import Blog
+from tags.models import Tag
 from .fields import OrderField
+# from .managers import PostManager, PublishedManager
 
 
 def get_post_image_dir_path(instance, filename):
@@ -15,7 +18,34 @@ def get_post_image_dir_path(instance, filename):
                                                          filename=filename)
 
 
-class PublishedManager(models.Manager):
+# def title(self):
+#     title_section_id = ContentType.objects.get_for_model(Title).id
+#     return self.sections.filter(
+#         content_type=title_section_id,
+#     ).order_by('order').first().content_object.title
+class TitledQuerySet(models.QuerySet):
+    def posts_with_title(self):
+        return (
+            self.annotate(
+                title=Subquery(
+                    Title.objects.filter(
+                        sections_relation__post=OuterRef('pk')
+                    ).values('title')
+                )
+            )
+        )
+
+
+class PostManager(models.Manager):
+    def get_queryset(self):
+        return TitledQuerySet(
+            model=self.model,
+            using=self._db,
+            hints=self._hints
+        ).posts_with_title()
+
+
+class PublishedManager(PostManager):
     def get_queryset(self):
         return super().get_queryset().filter(status='published')
 
@@ -37,7 +67,11 @@ class Post(models.Model):
     status = models.CharField(
         max_length=10, choices=STATUS_CHOICES, default='draft')
 
-    objects = models.Manager()
+    # TAGS
+    # tags = GenericRelation(TaggedItem)
+    tags = models.ManyToManyField(Tag, through='TaggedPost')
+
+    objects = PostManager()
     published = PublishedManager()
 
     class Meta:
@@ -46,11 +80,39 @@ class Post(models.Model):
     def __str__(self):
         return f'Post on {self.blog.title} blog'
 
+    @property
+    def first_text_section(self):
+        text_id = ContentType.objects.get_for_model(Text).id
+        citation_id = ContentType.objects.get_for_model(Citation).id
+        return self.sections.filter(
+            content_type__in=[text_id, citation_id]
+        ).order_by('order').first().content_object.content
+
+    @property
+    def first_image(self):
+        image_id = ContentType.objects.get_for_model(Image).id
+        return self.sections.filter(
+            content_type=image_id
+        ).order_by('order').first().content_object.content
+
     def get_absolute_url(self):
         return reverse('posts:post_detail',
                        args=[self.publish.year,
                              self.publish.month,
                              self.publish.day, self.slug])
+
+
+class TaggedPost(models.Model):
+    tag = models.ForeignKey(Tag,
+                            on_delete=models.CASCADE)
+    post = models.ForeignKey(Post,
+                             on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.post} tagged by {self.tag.name}'
+
+    class Meta:
+        unique_together = ('post', 'tag')
 
 
 class Section(models.Model):
@@ -59,8 +121,7 @@ class Section(models.Model):
     '''
     # POSTS_APP = 'posts'
     # Available section types
-    SECTION_TYPES = \
-        models.Q(app_label='posts', model='title') | \
+    SECTION_TYPES = models.Q(app_label='posts', model='title') | \
         models.Q(app_label='posts', model='subtitle') | \
         models.Q(app_label='posts', model='text') | \
         models.Q(app_label='posts', model='citation') | \
@@ -97,10 +158,14 @@ class ContentBase(models.Model):
                                         object_id_field='object_id',
                                         related_query_name='%(class)s')
 
-    @property
+    @ property
     def section(self):
         # Return the object if exists else None
         return self.sections_relation.first()
+
+    @property
+    def content(self):
+        pass
 
     class Meta:
         abstract = True
@@ -116,21 +181,41 @@ class ContentBase(models.Model):
 class Title(ContentBase):
     title = models.TextField(max_length=50)
 
+    @property
+    def content(self):
+        return self.title
+
 
 class SubTitle(ContentBase):
     subtitle = models.TextField(max_length=100)
+
+    @property
+    def content(self):
+        return self.subtitle
 
 
 class Text(ContentBase):
     text = models.TextField()
 
+    @property
+    def content(self):
+        return self.text
+
 
 class Citation(ContentBase):
     citation = models.TextField()
 
+    @property
+    def content(self):
+        return self.citation
+
 
 class Image(ContentBase):
     file = models.FileField(upload_to='images')
+
+    @property
+    def content(self):
+        return self.file
 
 
 # class Video(ContentBase):

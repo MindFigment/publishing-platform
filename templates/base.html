@@ -20,7 +20,7 @@
             <a href="{% url 'blogs:blog_list' %}" class="logo-wrapper"><img src="{% static '/img/logo.png' %}" alt="logo" /></a>
             <a href="{% url 'blogs:blog_list' %}">Blogs</a>
             <a href="{% url 'blogs:blog_list' %}">Blogs</a>
-            <a href="{% url 'blogs:blog_list' %}" class="move-right">Blogs</a>
+            <a href="{% url 'search:search' %}" class="move-right">Search</a>
             <a href="{% url 'blogs:blog_list' %}">Blogs</a>
             <span class="user">
                 {% if request.user.is_authenticated %}
@@ -44,11 +44,11 @@
         <ul class="menu-list">
             <li>
                 <div>
-                    <div class="asd">{{ request.user.username }}</div>
+                    <a href="{{ request.user.profile.get_absolute_url }}">{{ request.user.username }}</a>
                 </div>
             </li>
             <li>
-                <div><a href="#">Write a story</a></div>
+                <div><a href="#">Dashboard</a></div>
             </li>
             <li>
                 <div><a href="{% url 'blogs:manage_blogs' %}">Manage your blogs</a></div>

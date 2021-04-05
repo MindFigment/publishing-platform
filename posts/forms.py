@@ -2,17 +2,27 @@ from posts.models import Text
 from django import forms
 from django.forms import formset_factory
 
-from .models import Title, SubTitle, Text, Image, Citation
+from .models import Post, Title, SubTitle, Text, Image, Citation
+from tags.forms import TagField
+
+
+class PostForm(forms.ModelForm):
+    tags = TagField()
+
+    class Meta:
+        model = Post
+        fields = ('status',)
 
 
 class TitleForm(forms.Form):
     order = forms.IntegerField(min_value=0, widget=forms.HiddenInput())
     title = forms.CharField(
         label='Title',
-        widget=forms.TextInput(attrs={
-            'class': 'form-control',
+        widget=forms.Textarea(attrs={
+            'class': 'form-story-title',
             'placeholder': 'Blog title',
-            'autocomplete': 'off'
+            'autocomplete': 'off',
+            'rows': 1
         })
     )
 
@@ -24,10 +34,11 @@ class SubTitleForm(forms.ModelForm):
         model = SubTitle
         fields = ('subtitle',)
         widgets = {
-            'subtitle': forms.TextInput(attrs={
-                'class': 'form-control',
+            'subtitle': forms.Textarea(attrs={
+                'class': 'form-story-subtitle',
                 'placeholder': 'Subtitle',
-                'autocomplete': 'off'
+                'autocomplete': 'off',
+                'rows': 1
             })
         }
 
@@ -53,9 +64,11 @@ class TextForm(forms.ModelForm):
         fields = ('text',)
         widgets = {
             'text': forms.Textarea(attrs={
-                'class': 'form-control',
+                'class': 'form-story-text',
                 'placeholder': 'Text',
-                'autocomplete': 'off'
+                'autocomplete': 'off',
+                'rows': 1
+                # 'cols': 1,
             })
         }
 
@@ -75,9 +88,10 @@ class CitationForm(forms.ModelForm):
         fields = ('citation',)
         widgets = {
             'citation': forms.Textarea(attrs={
-                'class': 'form-control',
+                'class': 'form-story-citation',
                 'placeholder': 'Citation',
-                'autocomplete': 'off'
+                'autocomplete': 'off',
+                'rows': 1
             })
         }
 

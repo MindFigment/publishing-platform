@@ -1,4 +1,4 @@
-const storyContent = document.getElementById('story-content');
+const storyContent = document.querySelector('.story-content');
 let storyItems = Array.from(
   storyContent.querySelectorAll('.story-content__item')
 );
@@ -61,7 +61,7 @@ function buildStoryItem(emptyForm, totalForms, removeItemHandeler) {
 
   let removeButton = document.createElement('input');
   removeButton.setAttribute('type', 'button');
-  removeButton.setAttribute('value', 'X');
+  removeButton.setAttribute('value', 'x');
   removeButton.className = 'button-remove';
 
   // Fill provided form skeleton
@@ -78,7 +78,13 @@ function buildStoryItem(emptyForm, totalForms, removeItemHandeler) {
 
   const inputFile = wrapperDiv.querySelector('input[type="file"]');
   if (inputFile) {
+    wrapperDiv.classList.add('item__img-wrapper');
     buildImagePreview(inputFile);
+  }
+
+  const textArea = wrapperDiv.querySelector('textarea');
+  if (textArea) {
+    textArea.addEventListener('input', autoGrowTextFieldHandler, false);
   }
 
   // // ###############
@@ -129,7 +135,7 @@ function buildImagePreview(inputFile) {
           // img.width = 200;
           // img.height = 200;
           // im = img;
-          // URL.revokeObjectURL(img.src); // no longer needed, free memory
+          URL.revokeObjectURL(img.src); // no longer needed, free memory
         };
         // img.src = this.value;
         img.src = URL.createObjectURL(this.files[0]); // set src to blob url
@@ -321,6 +327,18 @@ function setStoryItemOrderBeforeSubmit(event) {
   orderInps.forEach((o_i) => console.log(oi_, o_i.value));
   // event.preventDefault();
 }
-const submitStoryInp = document.querySelector('.form');
+const submitStoryInp = document.querySelector('#story-form');
 console.log('submitStoryInp', submitStoryInp);
 submitStoryInp.addEventListener('submit', setStoryItemOrderBeforeSubmit, false);
+
+function autoGrowTextFieldHandler() {
+  this.style.height = 0;
+  this.style.height = this.scrollHeight + 'px';
+  console.log(this, this.scrollHeight, this.clientHeight, this.rows);
+  // if (this.scrollTop != 0) {
+
+  // }
+}
+
+const titleTextarea = document.querySelector('.form-story-title');
+titleTextarea.addEventListener('input', autoGrowTextFieldHandler, false);
