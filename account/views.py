@@ -1,11 +1,13 @@
+from django.core.paginator import EmptyPage, InvalidPage, Paginator
 from django.http import HttpResponse
 from django.shortcuts import render
+from django.views.decorators.http import require_GET
+
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 
 from .models import Profile
 from .forms import LoginForm, UserRegistrationForm, UserEditForm, ProfileEditForm
-from blogs.models import FollowRelationship
 
 
 def user_login(request):
@@ -92,12 +94,49 @@ def profile_detail(request, username):
                   {'profile': profile})
 
 
-def user_followers(request, username):
-    followers = FollowRelationship.objects.filter(
-        blog__author__user__username=username) \
-        .select_related('profile', 'blog') \
-        .order_by('-created')
+@require_GET
+@login_required
+def user_followers(request):
+    profile = request.user.profile
+    old_followers, new_followers = profile.get_old_and_new_followers()
+
+    old_paginator = Paginator(old_followers, 5)
+    new_paginator = Paginator(new_followers, 5)
+
+    is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+
+    if is_ajax:
+        page = request.GET.get('page')
+        new_or_old = request.GET.get('which')
+        try:
+            if new_or_old == 'NEW':
+                followers = new_paginator.page(page)
+                profile.set_followers_as_old(followers)
+            else:
+                followers = old_paginator.page(page)
+        except InvalidPage:
+            return HttpResponse('')
+        return render(request,
+                      'account/profile/followers_ajax_list.html',
+                      {
+                          'blog': False,
+                          'followers': followers
+                      })
+    else:
+        try:
+            old_followers = old_paginator.page(1)
+        except EmptyPage:
+            old_followers = []
+        try:
+            new_followers = new_paginator.page(1)
+            profile.set_followers_as_old(new_followers)
+        except EmptyPage:
+            new_followers = []
+
     return render(request,
                   'account/profile/followers_list.html',
-                  {'author': followers[0].blog.author.user.username,
-                   'followers': followers})
+                  {
+                      'blog': False,
+                      'new_followers': new_followers,
+                      'old_followers': old_followers,
+                  })

@@ -1,35 +1,145 @@
 {% extends "base.html" %}
+{% load custom_filters %}
 {% load thumbnail %}
+{% load static %}
 
-{% block title %}Blogs{% endblock %}
+{% block css %}
+<link href="{% static 'account/css/account.css' %}" rel="stylesheet">
+{% endblock %}
 
-<!-- <img src="{{ blog.image|thumbnail_url:'avatar' }}" alt="" /> -->
+{% block title %}Followers{% endblock %}
 
 {% block content %}
-<h1> {{ author }} followers</h1>
-<div id="people-list">
-  {% for follower in followers %}
-  <div class="user">
-    <a href="{{ follower.profile.get_absolute_url }}">
-      <img src="{% thumbnail follower.profile.photo 140x140 crop %}">
 
-    </a>
-    <a href="{{ follower.blog.get_absolute_url }}">
-      <img src="{% thumbnail follower.blog.image 140x140 crop %}">
+{% if blog %}
+  <h1> {{ blog.title }} blog followers</h1>
+{% else %}
+  <h1> All your ({{ request.user.username }}) followers</h1>
+{% endif %}
 
-    </a>
-    <div class="info">
-      <a href="{{ follower.blog.get_absolute_url  }}" class="title">
-        {{ follower.blog.title }} {{ follower.created }}
-      </a>
-    </div>
+<div class="followers-list">
+  <div class="buttons">
+    <button class="new-button" disabled>New</button>
+    <button class="old-button">Old</button>
   </div>
-  {% endfor %}
+
+  <div class="new-followers">
+    {% for follower in new_followers %}
+      <div class="follower">
+        <a href="{{ follower.profile.get_absolute_url }}">
+          <div class="info">
+            <img src="{% thumbnail follower.profile.photo 40x40 crop %}" class="info-image">
+            <div class="info-text">
+              <div class="info-first-row">{{ follower.profile.user.username.capitalize }}</div>
+              <div class="info-second-row"> {% if not blog %} Followed  {{ follower.blog.title }} {% endif %} {{ follower.created|time_passed }}</div>
+            </div>
+          </div>
+        </a>
+      </div>
+    {% endfor %}
+  </div>
+
+  <div class="old-followers hidden">
+    {% for follower in old_followers %}
+      <div class="follower">
+        <a href="{{ follower.profile.get_absolute_url }}">
+          <div class="info">
+            <img src="{% thumbnail follower.profile.photo 40x40 crop %}" class="info-image">
+            <div class="info-text">
+              <div class="info-first-row">{{ follower.profile.user.username.capitalize }}</div>
+              <div class="info-second-row"> {% if not blog %} Followed {{ follower.blog.title }} {% endif %} {{ follower.created|time_passed }}</div>
+            </div>
+          </div>
+        </a>
+      </div>
+    {% endfor %}
+  </div>
+
 </div>
 
 {% endblock %}
 
 {% block javascript %}
-<script>
+<script type='application/javascript' defer>
+
+  document.addEventListener('DOMContentLoaded', () => {
+
+    const newBtn = document.querySelector('.new-button');
+    const oldBtn = document.querySelector('.old-button');
+
+    const newFollowers = document.querySelector('.new-followers');
+    const oldFollowers = document.querySelector('.old-followers');
+
+    function toggleFollowersHandler() {
+      newFollowers.classList.toggle('hidden');
+      newBtn.toggleAttribute('disabled');
+      
+      oldFollowers.classList.toggle('hidden');
+      oldBtn.toggleAttribute('disabled');
+    }
+
+    newBtn.addEventListener('click', toggleFollowersHandler, false);
+    oldBtn.addEventListener('click', toggleFollowersHandler, false);
+
+    /* FETCH NEW FOLLOWERS */
+
+    function getNewOrOldFollowers() {
+      let newOrOld = oldFollowers.classList.contains('hidden') ? 'NEW' : 'OLD';
+      return newOrOld;
+    }
+
+    let newPage = 2;
+    let oldPage = 2;
+    let blockRequest = false;
+    let margin = 100;
+
+    async function getNextFollowersHandler() {
+      let fireFetch = (document.body.offsetHeight - window.innerHeight - window.pageYOffset - margin) <= 0;
+      let url = `
+                {% if blog %}
+                  {% url 'blogs:blog_followers' blog.slug %} 
+                {% else %}
+                  {% url 'user_followers' %}
+                {% endif %}
+                `.trim();
+      if (fireFetch && 
+          blockRequest === false) {
+            
+            console.log('sending request');
+            blockRequest = true;
+            newOrOld = getNewOrOldFollowers();
+
+            let response = await fetch(url + '?' + new URLSearchParams({
+              page: newOrOld === 'NEW' ? newPage : oldPage,
+              which: newOrOld
+
+            }), {
+              headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+              }
+            });
+
+            let result = await response.text();
+
+            if (result !== '') {
+              let followersList;
+              if (newOrOld === 'NEW') {
+                newPage += 1;
+                followersList = newFollowers;
+              }
+              else {
+                oldPage += 1;
+                followersList = oldFollowers;
+              }
+              followersList.innerHTML += (result);
+            }
+
+            blockRequest = false;
+          }
+    }
+
+    window.addEventListener('scroll', getNextFollowersHandler, false);
+
+  });
 </script>
 {% endblock %}

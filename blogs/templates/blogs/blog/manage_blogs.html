@@ -1,4 +1,5 @@
 {% extends "blogs_base.html" %}
+{% load static %}
 {% load thumbnail %}
 
 {% block title %}Your blogs{% endblock %}
@@ -13,71 +14,109 @@
 </ul>
 {% endif %}
 
+<h1>Your blogs</h1>
+
 <section class="new-blog">
-  <h2>New blog</h2>
   <a href="{% url 'blogs:new_blog' %}">
-    <div>
-      New Blog
-    </div>
+    <button>
+      NEW BLOG
+    </button>
   </a>
 </section>
 
 <section class="section">
   <h2>Active blogs</h2>
   <div class="blog-list">
-    {% for blog in active_blogs %}
-    <div class="blog-card">
-      <div class="blog-card__avatar">
-        <a href="{{ blog.get_absolute_url }}">
-          {% thumbnail blog.image 200x200 crop="smart" as im %}
-          <img src="{{ im.url }}">
-        </a>
-      </div>
-      <div class="blog-card__content">
-        <div class="blog-title">
-          {{ blog.title }}
+    {% if active_blogs %}
+      {% for blog in active_blogs %}
+        <div class="blog-card">
+          <div class="blog-card__avatar">
+            <a href="{{ blog.get_absolute_url }}">
+              {% thumbnail blog.image 200x200 crop="smart" as im %}
+              <img src="{{ im.url }}">
+            </a>
+          </div>
+          <div class="blog-card__content">
+            <div class="blog-title">
+              <a href="{{ blog.get_absolute_url }}">{{ blog.title }}</a>
+            </div>
+            <div class="blog-subtitle">
+              {{ blog.subtitle }}
+            </div>
+            <div class="panel">
+              <a href="{% url 'posts:post_create' blog.id %}" class="blog-card__button"><button class="write-story-btn create">Write story</button></a>
+                <div class="edit-delete">
+                  <a href="{% url 'blogs:edit_blog' blog.slug %}" class="blog-card__button"><button class="edit-blog-btn edit">Edit</button></a>
+                  <span class="blog-card__button">
+                    <button data-id="{{ blog.id }}" data-title="{{ blog.title }}" class="delete-blog-btn delete">
+                      Delete
+                    </button>
+                  </span>
+                </div>
+            </div>
+          </div>
         </div>
-        <div class="blog-subtitle">
-          {{ blog.subtitle }}
-        </div>
-        <a href="{% url 'blogs:edit_blog' blog.slug %}" class="blog-card__button">Edit</a>
-        <a href="{% url 'posts:post_create' blog.id %}" class="blog-card__button">Write story</a>
-      </div>
-    </div>
-    {% endfor %}
+      {% endfor %}
+    {% else %}
+      <div>No active blogs yet :(</div>
+    {% endif %}
   </div>
 </section>
 
-<section class="section">
+<section class="section last">
   <h2>Inactive blogs</h2>
-  {% for blog in inactive_blogs %}
-  <div class="blog-card">
-    <div class="blog-card__avatar">
-      <a href="{{ blog.get_absolute_url }}">
-        {% thumbnail blog.image 200x200 crop="smart" as im %}
-        <img src="{{ im.url }}">
-      </a>
-    </div>
-    <div class="blog-card__content">
-      <div class="blog-title">
-        {{ blog.title }}
-      </div>
-      <div class="blog-subtitle">
-        {{ blog.subtitle }}
-      </div>
-      <a href="{% url 'blogs:edit_blog' blog.slug %}" class="blog-card__button">Edit</a>
-      <a href="{% url 'posts:post_create' blog.id %}" class="blog-card__button">Write story</a>
-    </div>
-  </div>
-  {% endfor %}
+  <div class="blog-list">
+    {% if inactive_blogs %}
+      {% for blog in inactive_blogs %}
+        <div class="blog-card">
+          <div class="blog-card__avatar">
+            <a href="{{ blog.get_absolute_url }}">
+              {% thumbnail blog.image 200x200 crop="smart" as im %}
+              <img src="{{ im.url }}">
+            </a>
+          </div>
+          <div class="blog-card__content">
+            <div class="blog-title">
+              <a href="{{ blog.get_absolute_url }}">{{ blog.title }}</a>
+            </div>
+            <div class="blog-subtitle">
+              {{ blog.subtitle }}
+            </div>
+            <div class="panel">
+              <a href="{% url 'posts:post_create' blog.id %}" class="blog-card__button"><button class="write-story-btn create">Write story</button></a>
+              <div class="edit-delete">
+                <a href="{% url 'blogs:edit_blog' blog.slug %}" class="blog-card__button"><button class="edit-blog-btn edit">Edit</button></a>
+                <span class="blog-card__button">
+                  <button data-id="{{ blog.id }}" data-title="{{ blog.title }}" class="delete-blog-btn delete">
+                    Delete
+                  </button>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div>No inactive blogs at the moment :)</div>
+    {% endif %}
   </div>
 </section>
+
+<div class="modal-background hidden">
+  <div class="delete-modal">
+    <div class="close-modal"><span>X</span></div>
+    <div class="modal-content">
+      <h2>Delete</h2>
+      <p>Are you sure you want to this?</p>
+      <button type="button" class="cancel-modal-button">Cancel</button>
+      <button type="button" class="delete-blog-button delete">Delete</button>
+    </div>
+  </div>
+</div>
+
 {% endblock %}
 
 {% block javascript %}
-<script>
-  $(document).ready(function () {
-    let x = 1;
-  })
-</script>
+<script src="{% static 'js/get-cookie.js' %}" type="text/javascript" defer></script>
+<script src="{% static 'js/delete-blog.js' %}" type="text/javascript" defer></script>
 {% endblock %}

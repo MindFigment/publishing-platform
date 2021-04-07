@@ -12,12 +12,12 @@ def ajax_required(f):
     return wrap
 
 
-def require_instance_manager(func):
-    @wraps(func)
-    def inner(self, *args, **kwargs):
+def require_instance_manager(f):
+    @wraps(f)
+    def wrap(self, *args, **kwargs):
         if self.instance is None:
             raise TypeError(
-                f"Can't call {func.__name__} with a non-instance manager")
-        return func(self, *args, **kwargs)
+                f"Can't call {f.__name__} with a non-instance manager")
+        return f(self, *args, **kwargs)
 
-    return inner
+    return wrap

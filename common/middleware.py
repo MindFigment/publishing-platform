@@ -6,7 +6,4 @@ class CORSMiddleware:
         response = self.get_response(request)
         response['Access-Control-Allow-Origin'] = '*'
         response['Access-Control-Allow-Headers'] = '*'
-        print('request', request.META)
-        # print(request.META['HTTP_REFERER'])
-        print('response', response)
         return response

@@ -1,5 +1,4 @@
 from django.core.checks.messages import Error
-from django.db.models import query
 from django.template.defaultfilters import slugify
 
 import re
@@ -93,22 +92,18 @@ tests_html = (test_html_1,
               test_html_6)
 
 
-def _add_a_tag(match_obj):
-    url = match_obj.group(0)
-    HTML_LINK = '<a href="{0}">{0}</a>'
-    return HTML_LINK.format(url)
-
-
 def add_markdown_to_links(text=None):
     regex = r'''(
-                (?:(?:http|https)://){1}                                # scheme:// (https://)
+                # scheme:// (https://)
+                (?:(?:http|https)://){1}
                 # domain name (no port so not authority) (www.example.com)
                 (?:www\.)?(?:[a-z]+\.)*(?:[a-z]+)
                 # path (/path/to/myfile.html)
                 (?:/[a-zA-Z0-9_-]*)*(?:\.html)?
                 # query/parameters (?key1=value1&key2=value2)
                 (?:\?[a-z0-9]=[a-z0-9](?:[&;][a-z0-9]=[a-z0-9])*)?
-                (?:\#(?:[a-zA-Z0-9_-]*))?                               # anchor (#SomewhereInTheDocument)
+                # anchor (#SomewhereInTheDocument)
+                (?:\#(?:[a-zA-Z0-9_-]*))?
                 )
                 '''
 
@@ -120,6 +115,12 @@ def add_markdown_to_links(text=None):
     #     print(re.sub())
     #     print(_add_a_tag(url_match[0]))
     return re.sub(regex, _add_a_tag, text, flags=re.VERBOSE)
+
+
+def _add_a_tag(match_obj):
+    HTML_LINK = '<a href="{0}">{0}</a>'
+    url = match_obj.group(0)
+    return HTML_LINK.format(url)
 
 
 if __name__ == '__main__':

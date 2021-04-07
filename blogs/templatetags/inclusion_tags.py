@@ -14,7 +14,6 @@ IMAGE_MODEL_NAME = Image._meta.model_name
 def post_card(post):
     post_sections = post.sections.order_by('order')
     post_title = post_sections.get(content_type__model=TITLE_MODEL_NAME)
-    print('post title:', post_title.content_object.title)
     main_image = post_sections.filter(
         content_type__model=IMAGE_MODEL_NAME).first()
     first_paragraph = post_sections.filter(
@@ -26,9 +25,6 @@ def post_card(post):
     else:
         body = first_paragraph.content_object.text
 
-    print('main image:', main_image)
-    print('first_paragraph:', first_paragraph)
-    print('published', post.publish)
     return {
         'post': post,
         'image': main_image.content_object.file,

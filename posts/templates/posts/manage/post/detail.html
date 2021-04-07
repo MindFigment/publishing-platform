@@ -10,7 +10,11 @@
     {% endfor %}
 </div>
 
-<div class="similar"></div>
+<hr>
+<div class="similar">
+    <button class="find-similar-posts">Find similar posts</button>
+</div>
+<hr>
 
 {% endblock %}
 
@@ -21,19 +25,14 @@
 
     document.addEventListener("DOMContentLoaded", function () {
         const post = JSON.parse(document.getElementById('post-data').textContent);
-
-        console.log('post', post);
-
         const similarDiv = document.querySelector('.similar');
-        console.log(similarDiv);
+        const findSimilarBtn = document.querySelector('.find-similar-posts');
 
         function processSimilarPosts(posts) {
              posts.forEach(postData => createPostCard(postData));
         }
 
         function createPostCard(postData) {
-            // const img = document.createElement('img');
-            // img.src = `data:image;base64,${postData.blog.image}`
             postCardDiv = document.createElement('div');
             postCardDiv.innerHTML = displayPostCard(postData); 
             similarDiv.append(postCardDiv); 
@@ -76,18 +75,28 @@
             return postTemplate;
         }
 
-
-        fetch('http://localhost:8000/search/posts/similar?' + new URLSearchParams({
-            slug: post,
-            n: 4
-        }))
+        function findSimilarPostsHandler() {
+            console.log(post);
+            fetch('http://localhost:8000/search/posts/similar?' + new URLSearchParams({
+                slug: post,
+                n: 6
+            }))
             .then(res => res.json())
             .then(rawPosts => Promise.all(rawPosts.map(p => JSON.parse(p))))
             .then(posts => {
-                console.log(posts);
-                processSimilarPosts(posts);
+                if (posts.length > 0) {
+                    similarDiv.innerHTML = `<h2>Similar posts (${posts.length})</h2>`;
+                    processSimilarPosts(posts);
+                }
+                else {
+                    similarDiv.innerHTML = '<p>No similar posts found :(</p>'
+                }
             })
             .catch(err => console.error(err));
+        }
+
+        findSimilarBtn.addEventListener('click', findSimilarPostsHandler, false);
+
     });
     
 

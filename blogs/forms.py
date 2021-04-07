@@ -1,7 +1,7 @@
 from django import forms
 
 from .models import Blog
-from tags.forms import TagField, TagWidget
+from tags.forms import TagField
 from tags.models import Tag
 
 
@@ -17,22 +17,19 @@ class NewBlogForm(forms.ModelForm):
             print(initial)
         super().__init__(*args, **kwargs)
 
-    def save(self, *args, **kwargs):
+    def save(self, *args, author=None, commit=True, **kwargs):
         instance = super().save(*args, commit=False, **kwargs)
-        blog_tags = self.cleaned_data['tags']
-        blog_tags = Tag.tags.add(*blog_tags)
-        instance.tags.set(blog_tags)
+        if author is not None:
+            instance.author = author
 
-        # If there is no commit argument it means we are commiting
-        if kwargs.get('commit', True):
+        if commit:
             instance.save()
-            return instance
+            blog_tags = self.cleaned_data['tags']
+            blog_tags = Tag.tags.add(*blog_tags)
+            instance.tags.set(blog_tags)
 
-        return super().save(*args, **kwargs)
+        return instance
 
     class Meta:
         model = Blog
         fields = ('title', 'subtitle', 'about', 'image', 'is_active')
-        # widgets = {
-        #     'tags': TagWidget()
-        # }

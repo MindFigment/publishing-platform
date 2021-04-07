@@ -20,11 +20,12 @@ from posts.models import Blog
 class ExtendedEncoder(DjangoJSONEncoder):
     def default(self, o):
         if isinstance(o, Blog):
-            print('YEEEEE')
+            pass
         elif isinstance(o, Post):
             blog_image = ''
-            with open(o.blog.image.path, 'rb') as im:
-                blog_image = base64.b64encode(im.read()).decode('utf-8')
+            if o.blog.image:
+                with open(o.blog.image.path, 'rb') as im:
+                    blog_image = base64.b64encode(im.read()).decode('utf-8')
 
             blog = {
                 'id': o.blog.id,
@@ -34,8 +35,9 @@ class ExtendedEncoder(DjangoJSONEncoder):
             }
 
             author_image = ''
-            with open(o.blog.author.photo.path, 'rb') as im:
-                author_image = base64.b64encode(im.read()).decode('utf-8')
+            if o.blog.author.photo:
+                with open(o.blog.author.photo.path, 'rb') as im:
+                    author_image = base64.b64encode(im.read()).decode('utf-8')
 
             author = {
                 'id': o.blog.author.id,
@@ -45,8 +47,9 @@ class ExtendedEncoder(DjangoJSONEncoder):
             }
 
             post_image = ''
-            with open(o.first_image.path, 'rb') as im:
-                post_image = base64.b64encode(im.read()).decode('utf-8')
+            if o.first_image:
+                with open(o.first_image.path, 'rb') as im:
+                    post_image = base64.b64encode(im.read()).decode('utf-8')
 
             post = model_to_dict(o)
             post['publish'] = datetime.strftime(post['publish'], '%b %d, %Y')
@@ -54,8 +57,8 @@ class ExtendedEncoder(DjangoJSONEncoder):
             post['blog'] = blog
             post['author'] = author
             post['image'] = post_image
-            post['title'] = o.title
-            post['text'] = o.first_text_section
+            post['title'] = o.title or ''
+            post['text'] = o.first_text_section or ''
 
             return post
         elif isinstance(o, Model):
@@ -71,14 +74,15 @@ def build_query(obj):
 
 @ require_http_methods(['GET'])
 def get_most_similar_posts(request):
-
-    print('request', request.GET)
-
     slug = request.GET.get('slug')
     n = int(request.GET.get('n'))
 
-    post = get_object_or_404(Post.published.all(),
+    print('slug', slug)
+
+    post = get_object_or_404(Post.objects.all(),
                              slug=slug)
+
+    print('post', post)
 
     query = build_query(post)
     search_model = 'posts.Post'
@@ -87,6 +91,8 @@ def get_most_similar_posts(request):
 
     searcher = Searcher(query, search_model, uni_fields, agg_fields)
     similar_posts = searcher.most_similar(n)
+
+    print('similar', similar_posts)
 
     ps = [json.dumps(p, cls=ExtendedEncoder)
           for p in similar_posts if p.id != post.id]

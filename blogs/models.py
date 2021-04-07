@@ -1,39 +1,19 @@
 from django.db import models
-from django.db.models.aggregates import Count
-from django.db.models.expressions import F
 from django.urls import reverse
 
 from account.models import Profile
 from tags.models import Tag
-from .managers import ExtendedManager
 
+from common.utils import unique_slugify
 
-class IsActiveManager(models.Manager):
-    def get_queryset(self):
-        return super().get_queryset().filter(is_active=True)
-
-
-def get_blog_image_dir_path(instance, filename):
-    # file will be uploaded to MEDIA_ROOT / ...
-    return 'blogs/{}-{}/images/{}'.format(instance.title,
-                                          instance.author.user.username,
-                                          filename)
-
-
-def get_post_image_dir_path(instance, filename):
-    # file will be uploaded to MEDIA_ROOT / ...
-    return 'blogs/{}-{}-{}/images/posts/{}'.format(instance.blog.title,
-                                                   instance.blog.author.first_name,
-                                                   instance.blog.author.last_name,
-                                                   filename)
+from .managers import FollowRelationshipManager, BlogIsActiveManager
+from .utils import get_blog_image_dir_path
 
 
 class Blog(models.Model):
-    title = models.CharField(max_length=20)
+    title = models.CharField(max_length=50)
     subtitle = models.CharField(max_length=100)
     slug = models.SlugField(max_length=255, unique=True)
-    # author = models.ForeignKey(
-    #     Profile, on_delete=models.CASCADE, related_name='blogs')
     is_active = models.BooleanField(default=True)
     about = models.TextField()
     created = models.DateTimeField(auto_now_add=True)
@@ -51,7 +31,7 @@ class Blog(models.Model):
     tags = models.ManyToManyField(Tag, through='TaggedBlog')
 
     objects = models.Manager()
-    active = IsActiveManager()
+    active = BlogIsActiveManager()
 
     class Meta:
         ordering = ('created',)
@@ -63,31 +43,20 @@ class Blog(models.Model):
         return reverse('blogs:blog_detail',
                        args=[self.slug])
 
-    def get_seen_followers(self):
-        profile_ids = FollowRelationship.objects \
-            .seen(blog_id=self.id) \
-            .values_list('profile', flat=True)
-        followers = Profile.objects.filter(id__in=profile_ids, following=self.id).annotate(
-            created=F('following__created'))
-        return followers
+    def get_new_followers(self):
+        return FollowRelationship.objects.seen(blog_id=self.id)
 
-    def get_notseen_followers(self):
-        profile_ids = FollowRelationship.objects \
-            .notseen(self.id) \
-            .values_list('profile', flat=True)
-        followers = Profile.objects.filter(id__in=profile_ids, following=self.id).annotate(
-            created=F('following__created'))
-        return followers
+    def get_old_followers(self):
+        return FollowRelationship.objects.notseen(blog_id=self.id)
 
-    def set_followers_as_seen(self, followers):
-        followers_ids = followers.values_list('id', flat=True)
-        update = list(FollowRelationship.objects.filter(
-            blog=self.id, profile__in=followers_ids))
-        print('update before', [u.seen for u in update])
-        for rel in update:
-            rel.seen = True
-        print('update after', [u.seen for u in update])
-        FollowRelationship.objects.bulk_update(update, ['seen'])
+    def set_followers_as_old(self, followers):
+        for follower in followers:
+            follower.seen = True
+        FollowRelationship.objects.bulk_update(followers, ['seen'])
+
+    def save(self, *args, **kwargs):
+        self.slug = unique_slugify(self, [self.title])
+        super().save(*args, **kwargs)
 
 
 class TaggedBlog(models.Model):
@@ -114,9 +83,7 @@ class FollowRelationship(models.Model):
                                    db_index=True)
     seen = models.BooleanField(default=False)
 
-    objects = ExtendedManager()
-    # seen = SeenManager()
-    # notseen = NotSeenManager()
+    objects = FollowRelationshipManager()
 
     class Meta:
         ordering = ('-created',)

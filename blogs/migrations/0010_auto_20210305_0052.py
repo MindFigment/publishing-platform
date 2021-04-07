@@ -14,6 +14,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='post',
             name='image',
-            field=models.ImageField(blank=True, upload_to=blogs.models.get_post_image_dir_path),
+            field=models.ImageField(
+                blank=True, upload_to=blogs.utils.get_post_image_dir_path),
         ),
     ]

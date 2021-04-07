@@ -1,22 +1,53 @@
 {% extends "base.html" %}
 {% load thumbnail %}
-{% load html_links %}
+{% load custom_filters %}
+{% load static %}
+
+{% block css %}
+<link href="{% static 'account/css/account.css' %}" rel="stylesheet">
+{% endblock %}
 
 {% block title %}{{ user.get_full_name }}{% endblock %}
 
 {% block content %}
 
-<h1>{{ profile.user.get_full_name }}</h1>
-<p>{{ profile.about|html_links|safe|linebreaks }}</p>
-<div class="profile-info">
-  <img src="{% thumbnail profile.photo 180x180 %}" class="userdetail">
-</div>
-{% with total_followers=profile.get_followers_count %}
-<span class="count">
-  <a href="{% url 'user_followers' profile.user.username %}" class="total">
+
+<div class="profile">
+  <h1 class="profile__user"> About {{ profile.user.get_full_name.capitalize }}</h1>
+  <p class="profile__joined"> Joined {{ profile.user.date_joined|date }} </p>
+  <div class="about">
+    {% if profile.about %}
+        <p>{{ profile.about|html_links|linebreaks }}</p>
+    {% else %}
+      <p>...</p>
+    {% endif %}
+  </div>
+
+  {% with total_followers=profile.get_followers_count %}
+  <div class="count">
+    {% if request.user.id == profile.user.id %}
+    <a href="{% url 'user_followers' %}" class="total">
+      {{ total_followers }} follower{{ total_followers|pluralize }}
+    </a>
+    {% else %}
     {{ total_followers }} follower{{ total_followers|pluralize }}
-  </a>
-</span>
-{% endwith %}
+    {% endif %}
+  </div>
+  {% endwith %}
+  <div class="profile__img">
+    <!-- <img src="{% thumbnail profile.photo 250x250 %}"> -->
+    <img src="{{ profile.photo.url }}" />
+  </div>
+</div>
+<hr>
+<div class="blog-list">
+  <h4>Blogs</h4>
+  {% for blog in profile.blogs.all %}
+    <div>
+      <a href="{{ blog.get_absolute_url }}">{{ blog.title }}</a>
+    </div>
+  {% endfor %}  
+</div>
+
 
 {% endblock %}

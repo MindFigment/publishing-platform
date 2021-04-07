@@ -1,17 +1,19 @@
-from django.http.response import HttpResponseRedirect, JsonResponse, HttpResponse
+from django.http.response import JsonResponse, HttpResponse
 from django.shortcuts import get_object_or_404, render, redirect
-from django.contrib.auth.decorators import login_required
-from django.views.decorators.http import require_POST
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.views.decorators.http import require_POST, require_GET
+from django.core.paginator import InvalidPage, Paginator, EmptyPage, PageNotAnInteger
+from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
+
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+
+import json
+
+from tags.models import Tag
+from common.utils import unique_slugify
 
 from .models import Blog, FollowRelationship
 from .forms import NewBlogForm
-from tags.models import Tag
-from common.utils import unique_slugify
-from common.decorators import ajax_required
-# from comments.models import Comment
-# from comments.forms import CommentForm
 
 
 def blog_list(request):
@@ -37,7 +39,7 @@ def blog_ajax_list(request):
         blogs = paginator.page(paginator.num_pages)
     if request.is_ajax():
         return render(request,
-                      'blogs/blog/ajax_list.html',
+                      'blogs/blog/blogs_ajax_list.html',
                       {'blogs': blogs})
     return render(request,
                   'blogs/blog/list.html',
@@ -46,7 +48,6 @@ def blog_ajax_list(request):
 
 def blog_detail(request, slug):
     blog = Blog.objects.get(slug=slug)
-    # posts = blog.posts.filter(status='published')
     posts = blog.posts.all().prefetch_related('sections')
     return render(request, 'blogs/blog/detail.html',
                   {'blog': blog,
@@ -60,16 +61,7 @@ def new_blog(request):
         blog_form = NewBlogForm(data=request.POST,
                                 files=request.FILES)
         if blog_form.is_valid():
-            # Create a new blog object but avoid saving it yet
-            new_blog = blog_form.save(commit=False)
-            new_slug = unique_slugify(new_blog, [new_blog.title])
-            print('new_slug', new_slug, new_blog.slug)
-            new_blog.author = request.user.profile
-            blog_tags = blog_form.cleaned_data['tags']
-            blog_tags = Tag.tags.add(*blog_tags)
-            new_blog.tags.add(*blog_tags)
-            # Save the Blog object
-            new_blog.save()
+            new_blog = blog_form.save(author=request.user.profile)
             return render(request,
                           'blogs/blog/detail.html',
                           {'blog': new_blog})
@@ -81,68 +73,36 @@ def new_blog(request):
                   {'blog_form': blog_form})
 
 
-#######
-#######
-#######
-
-def hand_crafted_redirect_response(request):
-    response = HttpResponse(status=302)
-    response['Location'] = 'url...'
-    # return HttpResponseRedirect(url...)
-    return response
-
-
-def model_redirect_view(request):
-    blog = Blog.objects.first()
-    # Will call blog.get_absolute_url() to set redirect target url
-    http_response_redirect = redirect(blog)
-    print(http_response_redirect.url)
-    return http_response_redirect
-
-
-def fixed_featured_product_view(request):
-    blog = Blog.objects.first()
-
-
-#######
-#######
-#######
-
-
 @login_required
 def edit_blog(request, slug):
-    blog = get_object_or_404(Blog, slug=slug)
+    blog = get_object_or_404(Blog.objects.all(), slug=slug)
     if request.method == 'POST':
-        print('request')
-        print(request.POST)
-        print(request.FILES)
-        print(blog)
         blog_form = NewBlogForm(request.POST, request.FILES, instance=blog)
         if blog_form.is_valid():
-            # updated_blog = blog_form.save()
-            updated_blog = blog_form.save(commit=False)
-            # updated_slug = unique_slugify(updated_blog, [updated_blog.title])
-            # print('updated slug', updated_slug)
-            # blog_tags = blog_form.cleaned_data['tags']
-            # blog_tags = Tag.tags.add(*blog_tags)
-            # updated_blog.tags.add(*blog_tags)
-            # print('blog tags', blog_tags)
-            print(updated_blog)
-            print('updated blog', updated_blog.tags.all())
-            updated_blog.save()
+            updated_blog = blog_form.save()
             message = f'{updated_blog.title} updated succesfully'
             messages.add_message(request, messages.SUCCESS, message)
             return redirect('blogs:manage_blogs')
     else:
         blog_form = NewBlogForm(instance=blog)
-        # print(blog)
-        # print(blog_form)
+
     return render(request,
                   'blogs/blog/edit_blog.html',
                   {'blog_form': blog_form})
 
 
 @login_required
+# @csrf_exempt
+def delete_blog(request, blog_id):
+    blog = get_object_or_404(Blog.objects.all(), id=blog_id)
+    if request.method == 'DELETE':
+        blog.delete()
+        return JsonResponse({'status': 'ok'})
+    return JsonResponse({'status': 'error'})
+
+
+@login_required
+@ensure_csrf_cookie
 def manage_blogs(request):
     user_id = request.user.id
     user_blogs = Blog.objects.filter(author__user__id=user_id)
@@ -154,12 +114,13 @@ def manage_blogs(request):
                    'inactive_blogs': inactive_blogs})
 
 
-@ajax_required
 @require_POST
 @login_required
 def blog_follow(request):
-    blog_id = request.POST.get('id')
-    action = request.POST.get('action')
+    post_data = json.loads(request.body.decode('utf-8'))
+    blog_id = post_data.get('id')
+    action = post_data.get('action')
+    print(blog_id, action)
     if blog_id and action:
         try:
             blog = Blog.objects.get(id=blog_id)
@@ -176,4 +137,56 @@ def blog_follow(request):
             return JsonResponse({'status': 'ok'})
         except Blog.DoesNotExist:
             return JsonResponse({'status': 'error'})
+    print(':(')
     return JsonResponse({'status': 'error'})
+
+
+@require_GET
+@login_required
+def blog_followers(request, slug):
+    blog = get_object_or_404(Blog.objects.all(), slug=slug)
+    old_followers = blog.get_old_followers()
+    new_followers = blog.get_new_followers()
+
+    old_paginator = Paginator(old_followers, 5)
+    new_paginator = Paginator(new_followers, 5)
+
+    print('old', old_followers)
+    print('new', new_followers)
+
+    is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+
+    if is_ajax:
+        page = request.GET.get('page')
+        new_or_old = request.GET.get('which')
+        print('page', page, new_or_old)
+        try:
+            if new_or_old == 'NEW':
+                followers = new_paginator.page(page)
+            else:
+                followers = old_paginator.page(page)
+        except InvalidPage:
+            return HttpResponse('')
+        return render(request,
+                      'account/profile/followers_ajax_list.html',
+                      {
+                          'blog': blog,
+                          'followers': followers
+                      })
+    else:
+        try:
+            new_followers = new_paginator.page(1)
+        except EmptyPage:
+            new_followers = []
+        try:
+            old_followers = old_paginator.page(1)
+        except EmptyPage:
+            old_followers = []
+
+    return render(request,
+                  'account/profile/followers_list.html',
+                  {
+                      'blog': blog,
+                      'new_followers': new_followers,
+                      'old_followers': old_followers,
+                  })

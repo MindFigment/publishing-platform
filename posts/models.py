@@ -1,28 +1,19 @@
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
-from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.template.loader import render_to_string
 from django.db.models import OuterRef, Subquery
 
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
+
 from blogs.models import Blog
 from tags.models import Tag
+
 from .fields import OrderField
-# from .managers import PostManager, PublishedManager
+from .utils import get_post_image_dir_path
 
 
-def get_post_image_dir_path(instance, filename):
-    # file will be uploaded to MEDIA_ROOT / ...
-    return 'blogs/{slug}/images/posts/{filename}'.format(slug=instance.blog.slug,
-                                                         filename=filename)
-
-
-# def title(self):
-#     title_section_id = ContentType.objects.get_for_model(Title).id
-#     return self.sections.filter(
-#         content_type=title_section_id,
-#     ).order_by('order').first().content_object.title
 class TitledQuerySet(models.QuerySet):
     def posts_with_title(self):
         return (
@@ -55,20 +46,16 @@ class Post(models.Model):
         ('draft', 'Draft'),
         ('published', 'Published'),
     )
-    # title = models.CharField(max_length=255)
     slug = models.SlugField(max_length=255, unique_for_date='publish')
     blog = models.ForeignKey(
         Blog, on_delete=models.CASCADE, related_name='posts')
-    # image = models.ImageField(upload_to=get_post_image_dir_path,
-    #                           blank=True)
+
     publish = models.DateTimeField(default=timezone.now)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     status = models.CharField(
         max_length=10, choices=STATUS_CHOICES, default='draft')
 
-    # TAGS
-    # tags = GenericRelation(TaggedItem)
     tags = models.ManyToManyField(Tag, through='TaggedPost')
 
     objects = PostManager()
@@ -84,16 +71,22 @@ class Post(models.Model):
     def first_text_section(self):
         text_id = ContentType.objects.get_for_model(Text).id
         citation_id = ContentType.objects.get_for_model(Citation).id
-        return self.sections.filter(
+        text_section = self.sections.filter(
             content_type__in=[text_id, citation_id]
-        ).order_by('order').first().content_object.content
+        ).order_by('order').first()
+        if text_section:
+            return text_section.content_object.content
+        return None
 
     @property
     def first_image(self):
         image_id = ContentType.objects.get_for_model(Image).id
-        return self.sections.filter(
+        image = self.sections.filter(
             content_type=image_id
-        ).order_by('order').first().content_object.content
+        ).order_by('order').first()
+        if image:
+            return image.content_object.content
+        return None
 
     def get_absolute_url(self):
         return reverse('posts:post_detail',
@@ -211,15 +204,8 @@ class Citation(ContentBase):
 
 
 class Image(ContentBase):
-    file = models.FileField(upload_to='images')
+    file = models.FileField(upload_to=get_post_image_dir_path)
 
     @property
     def content(self):
         return self.file
-
-
-# class Video(ContentBase):
-#     url = models.URLField()
-
-
-# <hr width="50%" size="8" align="center">

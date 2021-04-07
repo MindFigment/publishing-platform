@@ -1,4 +1,6 @@
 {% extends "blogs_base.html" %}
+{% load custom_filters %}
+{% load thumbnail %}
 
 {% block title %}{{ blog.title }}{% endblock %}
 
@@ -13,24 +15,23 @@
         <h2> {{ blog.title }} </h2>
         <p> {{ blog.subtitle }} </p>
     </div>
-    {% if blog.about %}
-        <section class="blog-about">
-            <h2>About blog</h2>
-            <p> {{ blog.about|linebreaks }} </p>
-            {% endif %}
-            {% if blog.author.about %}
-        </section>
-    {% endif %}
-    <p> About me: {{ blog.author.about|linebreaks }} </p>
-    <a href="{{ blog.author.get_absolute_url }}"> By: {{ blog.author.user.get_username }}</a></p>
+
+    <section class="blog-about">
     {% with total_followers=blog.followers.count %}
     <div>
+        {% if request.user.id and request.user.id == blog.author.user.id %}
+        <a href="{% url 'blogs:blog_followers' blog.slug %}" class="count">
+            <span class="total">{{ total_followers }}</span>
+            follower{{ total_followers|pluralize }}
+        </a>
+        {% else %}
         <span class="count">
             <span class="total">{{ total_followers }}</span>
             follower{{ total_followers|pluralize }}
         </span>
-        {% if request.user.id != blog.author.user.id %}
-        <a href="#" data-id="{{ blog.id }}" data-action="{% if request.user.profile in blog.followers.all %}un{% endif %}follow" class="follow button">
+        {% endif %}
+        {% if request.user.id and request.user.id != blog.author.user.id %}
+        <a href="" data-id="{{ blog.id }}" data-action="{% if request.user.profile in blog.followers.all %}un{% endif %}follow" class="follow button">
             {% if request.user.profile not in blog.followers.all %}
             Follow
             {% else %}
@@ -40,59 +41,117 @@
         {% endif %}
     </div>
     {% endwith %}
-</section>
+    </section>
 
-<section>
-    <h2>Posts</h2>
-    <div class="post-list">
-        {% for post in posts %}
+    {% if blog.about %}
+        <section class="blog-about">
+            <h2>About blog</h2>
+            <p> {{ blog.about|html_links|linebreaks }} </p>
+            {% endif %}
+            {% if blog.author.about %}
+        </section>
+    {% endif %}
+
+    <section class="blog-about">
+        <h2> Author </h2>
+        <a href="{{ blog.author.get_absolute_url }}">
+            <div class="author__detail">
+                <img src="{% thumbnail blog.author.photo 40x40 crop %}" class="author__avatar">
+                <div>{{ blog.author.user.get_username }}</div>
+            </div>
+        </a>
+    </section>
+
+    <section class="blog-about">
+        <h2> Tags </h2>
+        {% if blog.tags.all %}
+            {% for tag in blog.tags.all %}
+                <span>#{{ tag.name }}</span>
+            {% endfor %}
+        {% else %}
+            <p>No tags yet :(</p>
+        {% endif %}
+        </a>
+    </section>
+
+    <section>
+        <h2>Posts</h2>
+        {% if posts %}
+        <div class="post-list">
+            {% for post in posts %}
             {% post_card post %}
-        {% endfor %}
-    </div>
-</section>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p>No posts yet :(</p>
+        {% endif %}
+    
+    </section>
 
+</section>
 {% endblock %}
 
 {% block javascript %}
-<script>
-    $(document).ready(function () {
-        $('a.follow').click(function (e) {
+<script type="application/javascript" defer>
+
+    document.addEventListener('DOMContentLoaded', () => {
+
+        const followBtn = document.querySelector('.follow.button');
+        const  totalFollowersSpan = document.querySelector('.count .total');
+
+        async function followHandler(event) {
+            let url = '{% url "blogs:blog_follow" %}';
             let token = '{{ csrf_token }}';
-            console.log(token)
-            e.preventDefault();
-            $.ajax({
-                type: 'POST',
-                headers: { 'X-CSRFToken': token },
-                url: '{% url "blogs:blog_follow" %}',
-                data: {
-                    id: $(this).data('id'),
-                    action: $(this).data('action'),
+            console.log('this', this.dataset);
+            let body = {
+                id: this.dataset.id,
+                action: this.dataset.action,
+            };
 
+            event.preventDefault();
+            let response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json;charset=utf-8',
+                    'X-CSRFToken': token
                 },
-                success: function (data) {
-                    if (data['status'] == 'ok') {
-                        let previous_action = $('a.follow').data('action');
-
-                        // toggle data-action
-                        $('a.follow').data('action',
-                            previous_action === 'follow' ? 'unfollow' : 'follow'
-                        );
-                        // toggle link text
-                        $('a.follow').text(
-                            previous_action == 'follow' ? 'Unfollow' : 'Follow'
-                        );
-
-                        // update total followers
-                        let previous_followers = parseInt(
-                            $('span.count .total').text()
-                        );
-                        $('span.count .total').text(
-                            previous_action == 'follow' ? previous_followers + 1 : previous_followers - 1
-                        );
-                    }
-                }
+                body: JSON.stringify(body)
             });
-        });
+
+            let result = await response.json();
+
+            if (result.status === 'ok') {
+                updateFollowers();
+                console.log('udapte followers');
+            }
+        }
+
+        function updateFollowers() {
+            let previous_action = followBtn.dataset.action;
+
+            // toggle data-action
+            followBtn.dataset.action = previous_action === 'follow' ? 
+                                                           'unfollow' :
+                                                           'follow';            
+
+            // toggle link text
+            followBtn.text = previous_action == 'follow' ?
+                                                'Unfollow' :
+                                                'Follow';
+
+            // update total followers
+            console.log('AAAAAA', totalFollowersSpan, totalFollowersSpan.innerHTML)
+            let previous_followers = parseInt(totalFollowersSpan.innerHTML);
+            console.log('PREVIOUS ACTION', previous_followers, previous_action)
+            totalFollowersSpan.innerHTML = previous_action === 'follow' ? 
+                                                           previous_followers + 1 :
+                                                           previous_followers - 1
+        };
+        
+        if (followBtn !== null) {
+            followBtn.addEventListener('click', followHandler, false);
+        }
+
     });
 </script>
 {% endblock %}

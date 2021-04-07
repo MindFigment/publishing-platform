@@ -1,22 +1,28 @@
-from django.core.checks.messages import Error
 from django.db.utils import IntegrityError
-from blogs.views import blog_ajax_list
 from django.shortcuts import render, redirect, get_object_or_404
-from django.forms.models import modelform_factory, modelformset_factory
-from django.apps import apps
 from django.urls.base import reverse
 from django.db import transaction
 
-from .models import Citation, Image, Post, Section, Title, SubTitle, Text
 from blogs.models import Blog
 from tags.models import Tag
-from .forms import PostForm, TitleForm, SubTitleFormset, TextFormset, CitationFormset, ImageFormset
 from common.utils import unique_slugify
 
+from .forms import PostForm, TitleForm, SubTitleFormset, TextFormset, CitationFormset, ImageFormset
+from .models import Citation, Image, Post, Section, Title, SubTitle, Text
 
-# WRITE_STORY_ROUTER = {
-#     'GET':
-# }
+
+def post_detail(request, year, month, day, slug):
+    post = get_object_or_404(Post.objects.prefetch_related('sections').all(),
+                             slug=slug,
+                             publish__year=year,
+                             publish__month=month,
+                             publish__day=day)
+
+    return render(request,
+                  'posts/manage/post/detail.html',
+                  {'post': post})
+
+
 SUBTITLE_PREFIX = 'subtitle'
 TEXT_PREFIX = 'text'
 CITATION_PREFIX = 'citation'
@@ -221,28 +227,3 @@ def create_post(request, blog_id):
                    'text_formset': text_formset,
                    'citation_formset': citation_formset,
                    'image_formset': image_formset})
-
-
-def post_detail(request, year, month, day, slug):
-    # status = 'published'
-    post = get_object_or_404(Post.objects.prefetch_related('sections').all(),
-                             slug=slug,
-                             publish__year=year,
-                             publish__month=month,
-                             publish__day=day)
-
-    # comments = post.comments.filter(active=True)
-    # new_comment = None
-
-    # if request.method == 'POST':
-    #     comment_form = CommentForm(data=request.POST)
-    #     if comment_form.is_valid():
-    #         new_comment = comment_form.save(commit=False)
-    #         new_comment.post = post
-    #         new_comment.save()
-    # else:
-    #     comment_form = CommentForm()
-
-    return render(request,
-                  'posts/manage/post/detail.html',
-                  {'post': post})

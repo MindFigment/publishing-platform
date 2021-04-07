@@ -27,7 +27,7 @@ def get_edit_link(obj):
     HTML_LINK_TEMPLATE = '''
         <a href="{url}">{text}</a>
     '''.strip()
-    print(obj)
+
     if obj.pk:
         admin_url_template = 'admin:{}_{}_change'.format(obj._meta.app_label,
                                                          obj._meta.model_name)
