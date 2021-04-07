@@ -9,7 +9,7 @@
     background: linear-gradient(#f8f8f8, #fff);
     box-shadow: 0 8px 16px -8px rgba(0, 0, 0, 0.4);
     border-radius: 3%;
-    margin: 1.5rem;
+    margin: 1.5rem 1.5rem 1.5rem 0;
     overflow: hidden;
 }
 
@@ -63,6 +63,11 @@ a:hover {
     height: 30px;
 }
 
+.blog-image img, .author-image img {
+    width: 33px;
+    height: 33px;
+}
+
 .post-title {
     font-weight: bold;
     font-size: 1.5rem;
@@ -101,6 +106,10 @@ a:hover {
     margin-left: 0.3rem;
 }
 
+.post-published.bigger {
+    font-size: 0.8rem;
+}
+
 .info {
     font-size: 0.7rem;
     /* font-style: italic; */
@@ -108,6 +117,10 @@ a:hover {
     text-align: left;
     justify-self: self-end;
     margin-left: 0.3rem;
+}
+
+.info.bigger {
+    font-size: 1rem;
 }
 
 .post-card__button {

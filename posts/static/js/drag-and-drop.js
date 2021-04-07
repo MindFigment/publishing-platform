@@ -62,7 +62,7 @@ function buildStoryItem(emptyForm, totalForms, removeItemHandeler) {
   let removeButton = document.createElement('input');
   removeButton.setAttribute('type', 'button');
   removeButton.setAttribute('value', 'x');
-  removeButton.className = 'button-remove';
+  removeButton.className = 'button-remove delete';
 
   // Fill provided form skeleton
   wrapperDiv.innerHTML = emptyForm.innerHTML.replace(

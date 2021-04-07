@@ -1,0 +1,41 @@
+{% extends "posts_base.html" %}
+{% load static %}
+
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block content %}
+
+<div class="story-sections">
+    {% for section in post.sections.all %}
+        {% render_section section %}
+        {% if section.content_object.title %}
+            <div class="post-card__avatar author-image bigger">
+                <a href="{{ post.blog.author.get_absolute_url }}">
+                    <img src="{{ post.blog.author.photo.url }}">
+                </a>
+                <div>
+                    <div class="info bigger">
+                        By <a href="{{ post.blog.author.get_absolute_url }}">
+                            {{ post.blog.author.user.username }} </a>
+                    </div>
+                    <div class="post-published bigger">
+                        {{ post.publish|date }}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    {% endfor %}
+</div>
+
+<hr>
+<div class="similar">
+    <button class="find-similar-posts">Find similar posts</button>
+</div>
+<hr>
+
+{% endblock %}
+
+{% block javascript %}
+{{ post.slug|json_script:"post-data" }}
+<script src="{% static 'js/find-similar-posts.js' %}" type="text/javascript" defer></script>
+{% endblock %}

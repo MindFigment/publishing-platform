@@ -19,7 +19,7 @@ def post_detail(request, year, month, day, slug):
                              publish__day=day)
 
     return render(request,
-                  'posts/manage/post/detail.html',
+                  'posts/post/detail.html',
                   {'post': post})
 
 
@@ -204,7 +204,7 @@ def create_post(request, blog_id):
                 print('Integrity error!', e)
                 # Post.objects.get(pk=new_story.id).delete()
                 return render(request,
-                              'posts/manage/post/write_story.html',
+                              'posts/post/write_story.html',
                               {'blog': blog,
                                'post_form': post_form,
                                'title_form': title_form,
@@ -219,7 +219,7 @@ def create_post(request, blog_id):
 
     print('\nrendering\n')
     return render(request,
-                  'posts/manage/post/write_story.html',
+                  'posts/post/write_story.html',
                   {'blog': blog,
                    'post_form': post_form,
                    'title_form': title_form,

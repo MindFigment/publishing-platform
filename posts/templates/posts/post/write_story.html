@@ -6,10 +6,8 @@ Blog {{ blog.title }} by {{ blog.author }}
 {% endblock %}
 
 {% block content %}
-<!-- <h1>Edit "{{ course.title }}"</h1> -->
+<h1>Blog "{{ blog.title }}" by {{ blog.author }}</h1>
 <section class="write-story">
-  <h1>Blog {{ blog.title }} by {{ blog.author }}</h1>
-  <h2 class="header">Story sections</h2>
   <form id="story-form" action="{% url 'posts:post_create' blog.id %}" method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{ subtitle_formset.management_form }}
@@ -17,24 +15,28 @@ Blog {{ blog.title }} by {{ blog.author }}
     {{ citation_formset.management_form }}
     {{ image_formset.management_form }}
 
-    <div>
+    <hr>
+    <div class="post-form">
       {{ post_form }}
+    </div>
+    <hr>
+
+    <div class="write-story__header">
+      <h2 class="header">Write your new story below and submit when ready</h2>
+      <input id="submit-story" type="submit" value="Create story" class="create">
+    </div>
+
+    <div>
+      <hr>
     </div>
 
     <div class="story-content">
 
       <div class="story-content__item">
-        <!-- <div class="input-label">
-          <label>{{ title_form.title.label }}</label>
-        </div> -->
         <div class="item__wrapper">
           {{ title_form.title }}
           {{ title_form.order }}
-          <!-- {{ title_form }} -->
         </div>
-        <!-- <div>
-          <input type="button" id="title-button-remove" value="X">
-        </div> -->
       </div>
     </div>
 
@@ -60,14 +62,15 @@ Blog {{ blog.title }} by {{ blog.author }}
         <img id="id_image-__prefix__-src">
       </div>
     </div>
-
-    <input id="submit-story" type="submit" value="Create story">
   </form>
+
+  <div>
+    <hr>
+  </div>
 
   <section class="content-types">
     <h3>Add new section:</h3>
     <div class="content-types__menu">
-      <!-- <input type="button" value="Title" id="add_title" disabled="true" /> -->
       <input type="button" value="Subtitle" id="add-subtitle" />
       <input type="button" value="Text" id="add-text" />
       <input type="button" value="Image" id="add-img" />
@@ -75,9 +78,13 @@ Blog {{ blog.title }} by {{ blog.author }}
     </div>
   </section>
 
+  <div>
+    <hr>
+  </div>
+  
 </section>
 {% endblock %}
 
 {% block javascript %}
-<script type="text/javascript" src="{% static '/js/drag-and-drop.js' %}" defer></script>
+<script type="text/javascript" src="{% static 'js/drag-and-drop.js' %}" defer></script>
 {% endblock %}

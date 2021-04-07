@@ -110,7 +110,3 @@ class ImageForm(forms.ModelForm):
 
 
 ImageFormset = formset_factory(ImageForm, extra=0)
-
-
-class DividerForm(forms.Form):
-    pass

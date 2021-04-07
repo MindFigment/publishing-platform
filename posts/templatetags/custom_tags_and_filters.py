@@ -15,7 +15,7 @@ def model_name(obj):
         return None
 
 
-@register.inclusion_tag("posts/manage/section/section.html", takes_context=False)
+@register.inclusion_tag("posts/sections/sections.html", takes_context=False)
 def render_section(section):
 
     print('section tag', section)

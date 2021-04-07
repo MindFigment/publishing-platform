@@ -1,12 +1,17 @@
 {% load thumbnail %}
+{% load static %}
 
 
 <div>
   <a href="{{ post.get_absolute_url }}">
     <div class="post-card">
       <div class="post-card__avatar">
+        {% if image.url %}
           {% thumbnail image 300x190 crop="smart" as im %}
           <img src="{{ im.url }}">
+        {% else %}
+          <img src="{{ image }}" width="300" height="190">
+        {% endif %}
       </div>
       <div class="post-card__content">
         <div class="post-title">

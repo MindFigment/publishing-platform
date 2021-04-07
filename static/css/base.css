@@ -129,35 +129,52 @@ input, textarea {
     font-size: 14px;
 }
 
-button {
+button, 
+input[type=submit],
+input[type=button] {
     cursor: pointer;
 }
 
-button.delete {
+button.delete, 
+input[type=submit].delete,
+input[type=button].delete {
     background: #8d450b;
 }
 
-button.delete:hover {
+button.delete:hover, 
+input[type=submit].delete:hover, 
+input[type=button].delete:hover {
     background: #c05f10;
 }
 
-button.edit {
+button.edit, 
+input[type=submit].edit,
+input[type=button].edit {
     background: #0b86ce;
 }
 
-button.edit:hover {
+button.edit:hover, 
+input[type=submit].edit:hover,
+input[type=button].edit:hover {
     background: #4ba4d8;
 }
 
-button.create {
+button.create, 
+input[type=submit].create,
+input[type=button].create {
     background: #3b8112;
 }
 
-button.create:hover {
+button.create:hover, 
+input[type=submit].create:hover,
+input[type=button].create:hover {
     background: #4eb612;
 }
 
-input[type=submit], a.button, button {
+input[type=submit],
+input[type=button],
+a.button, 
+button {
     font-weight: bold;
     background: #bfc5c2;
     color: #fff;
@@ -170,7 +187,10 @@ input[type=submit], a.button, button {
     cursor: pointer;
 }
 
-input[type=submit]:hover, a.button:hover, button:hover {
+input[type=submit]:hover,
+input[type=button]:hover, 
+a.button:hover, 
+button:hover {
     background: #b3b9b6;
 }
 
