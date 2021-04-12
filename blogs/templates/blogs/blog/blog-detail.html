@@ -1,4 +1,5 @@
-{% extends "blogs_base.html" %}
+{% extends "blogs-base.html" %}
+{% load custom_tags %}
 {% load custom_filters %}
 {% load thumbnail %}
 
@@ -74,10 +75,10 @@
         </a>
     </section>
 
-    <section>
+    <section class="blog-about">
         <h2>Posts</h2>
         {% if posts %}
-        <div class="post-list">
+        <div class="post-list-simple">
             {% for post in posts %}
                 {% post_card post %}
             {% endfor %}

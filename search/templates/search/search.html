@@ -1,29 +1,77 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Search{% endblock %}
 
+{% block css%}
+<link href="{% static '/css/search.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block javascript %}
+<script src="{% static '/js/search.js' %}" type='application/javascript' defer></script>
+{% endblock %}
+
 {% block content %}
   {% if query %}
-    <h1>Search results "{{ query }}"</h1>
-    <h3>
-      {% with results.count as total_results %}
-        Found {{ total_results }} result{{ total_results|pluralize }}
-      {% endwith %}
-    </h3>
-    
-    {% for result in results %}
-      <h4><a href="{{ result.get_absolute_url }}">{{ result.title }}</a></h4>
-        {{ result }}
-        {% empty %}
-      <p>There are no results for your query.</p>
-    {% endfor %}
-    <p><a href="{% url 'search:search' %}">Search again</a></p>
+    <h1>Search results for "{{ query }}"</h1>
+    <p><a href="{% url 'search:search_blogs_and_posts' %}">Search again</a></p>
+    <hr>
+
+    {% if search_posts and search_blogs %}
+      <div class="buttons">
+        <button class="posts-button" disabled>Posts</button>
+        <button class="blogs-button">Blogs</button>
+      </div>
+    {% endif %}
+
+    {% if search_posts %}
+      <div class="search-result-list posts">
+        {% if post_results %}
+          <p>Found {{ n_posts }} post{{ n_posts|pluralize }}: </p>
+          {% for post in post_results %}
+            <h4><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h4>
+          {% endfor %}
+        {% else %}
+          <p>No posts found for your query.</p>
+        {% endif %}
+      </div>
+    {% endif %}
+  
+    {% if search_blogs %}
+      <div class="search-result-list blogs hidden">
+        {% if blog_results %}
+        <p>Found {{ n_blogs }} blog{{ n_blogs|pluralize }}: </p>
+          {% for blog in blog_results %}
+            <h4><a href="{{ blog.get_absolute_url }}">{{ blog.title }}</a></h4>
+          {% endfor %}
+        {% else %}
+            <p>No blogs found for your query.</p>
+        {% endif %}
+      </div>
+    {% endif %}
+  
   {% else %}
     <h1>Search</h1>
-    <form method="get">
-      {{ search_form.query.label }}
-      {{ search_form.as_p }}
+    <form method="get" class="search" action="{% url 'search:search_blogs_and_posts' %}">
+      <div class="search-query">
+        <p>Query:</p>
+        {{ search_form.query }}
+      </div>
+      <div class="search-panel">
+        <div class="search-row">
+          <span>Models:</span>
+          {{ search_form.search_models }}
+        </div>
+        <div class="search-row">
+          <span>Fields:</span>
+          {{ search_form.search_fields }}
+        </div>
+      </div>
       <input type="submit" value="Search">
     </form>
   {% endif %}
+
+  {{ search_posts|json_script:"search_posts" }}
+  {{ search_blogs|json_script:"search_blogs" }}
+
 {% endblock %}

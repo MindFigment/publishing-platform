@@ -2,15 +2,12 @@ from django.http.response import JsonResponse, HttpResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.views.decorators.http import require_POST, require_GET
 from django.core.paginator import InvalidPage, Paginator, EmptyPage, PageNotAnInteger
-from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
+from django.views.decorators.csrf import ensure_csrf_cookie
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
 import json
-
-from tags.models import Tag
-from common.utils import unique_slugify
 
 from .models import Blog, FollowRelationship
 from .forms import NewBlogForm
@@ -18,7 +15,7 @@ from .forms import NewBlogForm
 
 def blog_list(request):
     blogs = Blog.active.all()
-    return render(request, 'blogs/blog/list.html', {'blogs': blogs})
+    return render(request, 'blogs/blog/blogs-list.html', {'blogs': blogs})
 
 
 def blog_ajax_list(request):
@@ -39,17 +36,17 @@ def blog_ajax_list(request):
         blogs = paginator.page(paginator.num_pages)
     if request.is_ajax():
         return render(request,
-                      'blogs/blog/blogs_ajax_list.html',
+                      'blogs/blog/blogs-ajax-list.html',
                       {'blogs': blogs})
     return render(request,
-                  'blogs/blog/list.html',
+                  'blogs/blog/blogs-list.html',
                   {'blogs': blogs})
 
 
 def blog_detail(request, slug):
     blog = Blog.objects.get(slug=slug)
     posts = blog.posts.all().prefetch_related('sections')
-    return render(request, 'blogs/blog/detail.html',
+    return render(request, 'blogs/blog/blog-detail.html',
                   {'blog': blog,
                    'posts': posts})
 
@@ -63,13 +60,13 @@ def new_blog(request):
         if blog_form.is_valid():
             new_blog = blog_form.save(author=request.user.profile)
             return render(request,
-                          'blogs/blog/detail.html',
+                          'blogs/blog/blog-detail.html',
                           {'blog': new_blog})
     else:
         blog_form = NewBlogForm()
         print(blog_form)
     return render(request,
-                  'blogs/blog/new_blog.html',
+                  'blogs/blog/blog-new.html',
                   {'blog_form': blog_form})
 
 
@@ -87,12 +84,11 @@ def edit_blog(request, slug):
         blog_form = NewBlogForm(instance=blog)
 
     return render(request,
-                  'blogs/blog/edit_blog.html',
+                  'blogs/blog/blog-edit.html',
                   {'blog_form': blog_form})
 
 
 @login_required
-# @csrf_exempt
 def delete_blog(request, blog_id):
     blog = get_object_or_404(Blog.objects.all(), id=blog_id)
     if request.method == 'DELETE':
@@ -109,7 +105,7 @@ def manage_blogs(request):
     active_blogs = user_blogs.filter(is_active=True)
     inactive_blogs = user_blogs.filter(is_active=False)
     return render(request,
-                  'blogs/blog/manage_blogs.html',
+                  'blogs/blog/blogs-manage.html',
                   {'active_blogs': active_blogs,
                    'inactive_blogs': inactive_blogs})
 
@@ -168,7 +164,7 @@ def blog_followers(request, slug):
         except InvalidPage:
             return HttpResponse('')
         return render(request,
-                      'account/profile/followers_ajax_list.html',
+                      'account/profile/followers-ajax-list.html',
                       {
                           'blog': blog,
                           'followers': followers
@@ -184,7 +180,7 @@ def blog_followers(request, slug):
             old_followers = []
 
     return render(request,
-                  'account/profile/followers_list.html',
+                  'account/profile/followers-list.html',
                   {
                       'blog': blog,
                       'new_followers': new_followers,

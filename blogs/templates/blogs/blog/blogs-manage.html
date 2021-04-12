@@ -1,8 +1,13 @@
-{% extends "blogs_base.html" %}
+{% extends "blogs-base.html" %}
 {% load static %}
 {% load thumbnail %}
 
 {% block title %}Your blogs{% endblock %}
+
+{% block javascript %}
+<script src="{% static 'js/get-cookie.js' %}" type="text/javascript" defer></script>
+<script src="{% static 'js/delete-blog.js' %}" type="text/javascript" defer></script>
+{% endblock %}
 
 {% block content %}
 
@@ -44,7 +49,18 @@
               {{ blog.subtitle }}
             </div>
             <div class="panel">
-              <a href="{% url 'posts:post_create' blog.id %}" class="blog-card__button"><button class="write-story-btn create">Write story</button></a>
+              <div class="edit-delete">
+                <a href="{% url 'posts:manage_posts' blog.slug %}" class="blog-card__button">
+                  <button class="write-story-btn create">
+                    Stories
+                  </button>
+                </a>
+                <a href="{% url 'posts:post_create' blog.id %}" class="blog-card__button">
+                  <button class="write-story-btn create">
+                    New story
+                  </button>
+                </a>
+              </div>
                 <div class="edit-delete">
                   <a href="{% url 'blogs:edit_blog' blog.slug %}" class="blog-card__button"><button class="edit-blog-btn edit">Edit</button></a>
                   <span class="blog-card__button">
@@ -114,9 +130,4 @@
   </div>
 </div>
 
-{% endblock %}
-
-{% block javascript %}
-<script src="{% static 'js/get-cookie.js' %}" type="text/javascript" defer></script>
-<script src="{% static 'js/delete-blog.js' %}" type="text/javascript" defer></script>
 {% endblock %}

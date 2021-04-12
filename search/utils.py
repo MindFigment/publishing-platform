@@ -1,7 +1,12 @@
-from django.db.models import Q
-
 from itertools import chain
 import re
+
+from django.db.models import Q
+
+
+def build_query(obj):
+    query = ' '.join([obj.title] + [tag.name for tag in obj.tags.all()])
+    return query
 
 
 def get_search_params(cd):

@@ -1,0 +1,36 @@
+{% load thumbnail %}
+{% load static %}
+
+
+<a href="{{ post.get_absolute_url }}">
+  <div class="post-card-simple">
+    <div class="post-card-simple__avatar">
+      {% if image.url %}
+        {% thumbnail image 300x190 crop="smart" as im %}
+        <img src="{{ im.url }}">
+      {% else %}
+        <img src="{{ image }}" width="300" height="190">
+      {% endif %}
+    </div>
+    <div class="post-card-simple__content">
+      <div class="post-simple__title">
+        {{ title }}
+      </div>
+      <div class="post-simple__first-paragraph">
+        {{ first_paragraph|truncatechars:215 }}
+      </div>
+      <div class="post-simple__tags">
+        {% if post.tags.slugs %}
+          {% for tag in post.tags.slugs %}
+            <span>#{{ tag }}</span>
+          {% endfor %}
+        {% else %}
+          <span>No tags yet</span>
+        {% endif %}
+      </div>
+      <div class="post-simple__published">
+        Published {{ post.publish|date }}
+      </div>
+    </div>
+  </div>
+</a>

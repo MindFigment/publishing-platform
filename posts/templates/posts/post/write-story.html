@@ -1,5 +1,13 @@
-{% extends "posts_base.html" %}
+{% extends "base.html" %}
 {% load static %}
+
+{% block css %}
+<link href="{% static '/css/write-story.css' %}" rel="stylesheet" defer>
+{% endblock %}
+
+{% block javascript %}
+<script type="text/javascript" src="{% static 'js/drag-and-drop.js' %}" defer></script>
+{% endblock %}
 
 {% block title %}
 Blog {{ blog.title }} by {{ blog.author }}
@@ -83,8 +91,4 @@ Blog {{ blog.title }} by {{ blog.author }}
   </div>
   
 </section>
-{% endblock %}
-
-{% block javascript %}
-<script type="text/javascript" src="{% static 'js/drag-and-drop.js' %}" defer></script>
 {% endblock %}

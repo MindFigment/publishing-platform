@@ -28,7 +28,6 @@ def user_login(request):
                 return HttpResponse('Invalid login')
     else:
         form = LoginForm()
-        print("Sending form", form)
     return render(request, 'login.html', {'form': form})
 
 
@@ -43,15 +42,11 @@ def register(request):
     if request.method == 'POST':
         user_form = UserRegistrationForm(request.POST)
         if user_form.is_valid():
-            # Create a new user object but avoid saving it yet
             new_user = user_form.save(commit=False)
-            # Set the chosen password
             new_user.set_password(
                 user_form.cleaned_data['password']
             )
-            # Save the User object
             new_user.save()
-            # Create the user profile
             Profile.objects.create(user=new_user)
             return render(request,
                           'account/registration/register_done.html',
@@ -88,7 +83,6 @@ def edit(request):
 def profile_detail(request, username):
     profile = Profile.objects.select_related('user').get(user__username=username,
                                                          user__is_active=True)
-    print(profile)
     return render(request,
                   'account/profile/detail.html',
                   {'profile': profile})

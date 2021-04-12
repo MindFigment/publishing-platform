@@ -25,12 +25,15 @@ a:hover {
     color: rgb(158, 138, 48)
 }
 
+a.emphasis {
+    font-weight: 600;
+}
+
 h1, h2, h3, h4, h5, h6 {
     font-weight: bold;
 }
 
 h1 {
-    /* border-bottom: 1px solid #bbb; */
     padding: 0 0 10px 0;
     margin: 10px 0 20px 0;
 }
@@ -75,7 +78,6 @@ hr {
 
 #header ul.menu li {
     float: left;
-    /* padding: 4px 10px; */
 }
 
 #header ul.menu li.selected a, #header ul.menu li.selected a:hover {
@@ -111,11 +113,25 @@ form p {
     overflow: auto;
 }
 
+form[method="post"] ul {
+    margin: 0;
+    padding: 0;
+    font-size: 0.9rem;
+    font-style: italic;
+    font-weight: lighter;
+    list-style-type: none;
+}
+
+form[method="post"] ul li {
+    padding-bottom: 0.3rem;
+}
+
 label {
     float: left;
     clear: both;
     color: #333;
     margin-bottom: 4px;
+    display: block;
 }
 
 input, textarea {
@@ -129,52 +145,44 @@ input, textarea {
     font-size: 14px;
 }
 
-button, 
-input[type=submit],
-input[type=button] {
+p>input[type="text"], p>input[type="file"], p>input[type="password"], p>input[type="email"], p>textarea {
+    width: 25rem;
+}
+
+button, input[type=submit], input[type=button] {
     cursor: pointer;
 }
 
-button.delete, 
-input[type=submit].delete,
-input[type=button].delete {
+button.delete, input[type=submit].delete, input[type=button].delete {
     background: #8d450b;
 }
 
-button.delete:hover, 
-input[type=submit].delete:hover, 
-input[type=button].delete:hover {
+button.delete:hover, input[type=submit].delete:hover, input[type=button].delete:hover {
     background: #c05f10;
 }
 
-button.edit, 
-input[type=submit].edit,
-input[type=button].edit {
+button.edit, input[type=submit].edit, input[type=button].edit {
     background: #0b86ce;
 }
 
-button.edit:hover, 
-input[type=submit].edit:hover,
-input[type=button].edit:hover {
+button.edit:hover, input[type=submit].edit:hover, input[type=button].edit:hover {
     background: #4ba4d8;
 }
 
-button.create, 
-input[type=submit].create,
-input[type=button].create {
+button.create, input[type=submit].create, input[type=button].create {
     background: #3b8112;
 }
 
-button.create:hover, 
-input[type=submit].create:hover,
-input[type=button].create:hover {
+button.create:hover, input[type=submit].create:hover, input[type=button].create:hover {
     background: #4eb612;
 }
 
-input[type=submit],
-input[type=button],
-a.button, 
-button {
+button:disabled {
+    background-color: rgb(226, 220, 220);
+    color: rgb(196, 186, 186);
+}
+
+input[type=submit], input[type=button], a.button, button {
     font-weight: bold;
     background: #bfc5c2;
     color: #fff;
@@ -187,10 +195,7 @@ button {
     cursor: pointer;
 }
 
-input[type=submit]:hover,
-input[type=button]:hover, 
-a.button:hover, 
-button:hover {
+input[type=submit]:hover, input[type=button]:hover, a.button:hover, button:hover {
     background: #b3b9b6;
 }
 
@@ -198,7 +203,6 @@ button:hover {
     color: #cc0033;
     float: left;
     clear: both;
-    padding-left: 10px;
 }
 
 .helptext {
@@ -274,12 +278,6 @@ ul.messages li a.close {
 
 /* images */
 
-/* .image-preview, .image-detail {
-    max-width: 300px;
-    float: left;
-    margin: 0 20px 20px 0;
-} */
-
 .image-detail {
     margin-top: 20px;
 }
@@ -308,17 +306,10 @@ a.like, a.follow {
 
 #image-list .image {
     float: left;
-    /* width: 220px;
-    height: 300px; */
     margin: 0 10px 10px 10px;
     border-top: 8px solid #12c064;
     background: #eee;
 }
-
-/* #image-list img {
-    width: 220px;
-    height: 220px;
-} */
 
 #image-list .info {
     padding: 10px;
@@ -344,14 +335,11 @@ a.like, a.follow {
 /* users */
 
 #people-list img {
-    /* width: 180px;
-    height: 180px; */
     border-radius: 50%;
     margin-bottom: 20px;
 }
 
 #people-list .user {
-    /* width: 180px; */
     float: left;
     overflow: auto;
     padding: 10px;
@@ -393,11 +381,7 @@ img.user-detail {
     color: #ccc;
 }
 
-/**************************/
-
-/**************************/
-
-/**************************/
+/* header */
 
 header.main-header {
     background-color: rgb(240, 230, 230);
@@ -424,8 +408,6 @@ header.main-header div.nav {
 #content {
     margin-left: 2.5em;
     margin-right: 2.5em;
-    /* width: 100%;
-    height: 100%; */
 }
 
 header.main-header .nav>* {
@@ -434,13 +416,10 @@ header.main-header .nav>* {
 
 #menu-popup {
     position: fixed;
-    display: none;
     top: 65px;
     right: 10px;
     width: 200px;
     height: 175px;
-    /* display: block; */
-    /* float: right; */
     background: rgb(243, 239, 239);
     overflow: auto;
     text-align: left;
@@ -495,11 +474,10 @@ header.main-header .move-right {
     cursor: pointer;
 }
 
-/**************************/
-
-/**************************/
-
-/**************************/
+.fade {
+    opacity: 0;
+    display: none;
+}
 
 div.reg-form {
     display: flex;
@@ -518,23 +496,4 @@ section.reg-form {
 .help {
     font-size: 0.8em;
     align-self: flex-start;
-}
-
-/**************************/
-
-/**************************/
-
-/**************************/
-
-.post-list {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    width: 58%;
-    margin: auto;
-}
-
-.post-card {
-    width: 100%;
 }

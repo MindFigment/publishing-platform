@@ -18,34 +18,34 @@ function displayPostCard(postData) {
     insertImage = `<img src="data:image;base64,${postData.image}"/>`;
 
   postTemplate = `
-            <div class="post-card">
-                <div class="post-card__avatar post-image">
+            <div class="post-card-detailed">
+                <div class="post-card-detailed__avatar post-image">
                     <a href="${postData.url}">
                         ${insertImage}                   
                     </a>
                 </div>
-                <div class="post-card__content">
-                    <div class="post-title">
+                <div class="post-card-detailed__content">
+                    <div class="post-detailed__title">
                         <a href="${postData.url}">${postData.title}</a>
                     </div>
-                    <div class="post-card__avatar author-image">
+                    <div class="post-card-detailed__avatar author-image">
                         <img src="data:image;base64,${postData.author.image}">
                         <div>
-                            <div class="info">
+                            <div class="post-detailed__info">
                                 By <a href="${postData.author.url}"> 
                                 ${postData.author.username} </a>
                                 on <a href="${postData.blog.url}">
                                 ${postData.blog.title} </a>
                             </div>
-                            <div class="post-published">${
+                            <div class="post-detailed__published">${
                               postData.publish
                             }</div>
                         </div>
                     </div>
-                    <div class="post-first-paragraph">
+                    <div class="post-detailed__first-paragraph">
                         ${postData.text.slice(0, 200)}...
                     </div>
-                    <div class="post-tags">
+                    <div class="post-detailed__tags">
                         tags: ${
                           postData.tags.length !== 0
                             ? Array.from(postData.tags).map(

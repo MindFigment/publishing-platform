@@ -6,9 +6,12 @@ from blogs.models import Blog
 
 class SearchForm(forms.Form):
 
+    SEARCH_POSTS = 'posts.Post'
+    SEARCH_BLOGS = 'blogs.Blog'
+
     MODEL_CHOICES = (
-        ('posts.Post', 'post'),
-        ('posts.Post', 'blog')
+        (SEARCH_POSTS, 'post'),
+        (SEARCH_BLOGS, 'blog')
     )
 
     BY_CHOICES = (
@@ -20,7 +23,7 @@ class SearchForm(forms.Form):
     search_models = forms.MultipleChoiceField(
         widget=forms.CheckboxSelectMultiple,
         choices=MODEL_CHOICES,
-        initial=('posts.Post', 'posts.Post'),
+        initial=(SEARCH_POSTS, SEARCH_BLOGS),
     )
     search_fields = forms.MultipleChoiceField(
         widget=forms.CheckboxSelectMultiple,

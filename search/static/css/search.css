@@ -1,0 +1,69 @@
+form.search {
+    display: flex;
+    flex-direction: column;
+}
+
+.search-query p {
+    margin: 0;
+}
+
+.search-query input {
+    margin-bottom: 1rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.search-panel {
+    display: flex;
+    flex-direction: column;
+}
+
+.search input[type="submit"] {
+    margin-top: 1rem;
+}
+
+.search ul {
+    list-style-type: none;
+    display: flex;
+    flex-direction: row;
+}
+
+#id_search_models, #id_search_fields {
+    display: flex;
+    flex-direction: row;
+    margin: 0;
+    padding: 0;
+}
+
+#id_search_models li, #id_search_fields li {
+    margin-right: 0.5rem;
+    text-align: center;
+}
+
+.search-row {
+    display: flex;
+    flex-direction: row;
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+}
+
+.search-row span {
+    width: 5rem;
+}
+
+label {
+    display: flex;
+    flex-direction: row;
+    margin: 0;
+    width: 5rem;
+}
+
+label input {
+    margin-top: auto;
+    margin-bottom: auto;
+    margin-right: 0.2rem;
+}
+
+.hidden {
+    display: none;
+}

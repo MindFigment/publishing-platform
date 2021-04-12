@@ -4,12 +4,11 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>{% block title %}{% endblock %}</title>
+    <title>{% block title %}Publishing platform{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link href="{% static '/css/base.css' %}" rel="stylesheet">
     {% block css %}{% endblock %}
-    <script src="https://code.jquery.com/jquery-3.5.0.js" defer></script>
-    <script src="{% static 'js/popup_menu.js' %}" defer></script>
+    <script src="{% static 'js/menu-popup.js' %}" defer></script>
     {% block javascript %}{% endblock %}
 </head>
 
@@ -21,7 +20,7 @@
             {% if request.user.is_authenticated and request.user.profile.get_new_followers_count > 0 %}
             <a href="{% url 'user_followers' %}">{{ request.user.profile.get_new_followers_count }} new followers</a>
             {% endif %}
-            <a href="{% url 'search:search' %}" class="move-right"><p>Search</p></a>
+            <a href="{% url 'search:search_blogs_and_posts' %}" class="move-right"><p>Search</p></a>
             <a href="{% url 'blogs:blog_list' %}"><p>Blogs</p></a>
             <a href="{% url 'blogs:blog_list' %}"><p>Posts</p></a>
             {% if request.user.is_authenticated %}
@@ -29,14 +28,12 @@
             {% endif %}
             <div class="user">
                 {% if request.user.is_authenticated %}
-                <!-- <div class="hero-wrapper"><img id="hero" src="{% static '/img/hero.jpg' %}" alt="hero" /></div> -->
                 <div class="hero-wrapper"><img id="hero" src="{{ request.user.profile.photo.url }}" alt="hero" /></div>
                 {% else %}
                 <a href="{% url 'login' %}">Login</a>
                 {% endif %}
             </div>
         </div>
-        <!-- <span {% if section == "dashboard" %} class="selected" {% endif %}> DAAASHBOARD</span> -->
     </header>
     {% endblock %}
 
@@ -45,7 +42,7 @@
         {% endblock %}
     </main>
 
-    <div id="menu-popup">
+    <div id="menu-popup" class="fade">
         <ul class="menu-list">
             <li>
                 <div>

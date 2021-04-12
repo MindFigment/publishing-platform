@@ -1,13 +1,14 @@
-from posts.models import Text
 from django import forms
 from django.forms import formset_factory
 
-from .models import Post, Title, SubTitle, Text, Image, Citation
+from posts.models import Text
 from tags.forms import TagField
+
+from .models import Post, SubTitle, Text, Image, Citation
 
 
 class PostForm(forms.ModelForm):
-    tags = TagField()
+    tags = TagField(required=False)
 
     class Meta:
         model = Post
@@ -46,16 +47,6 @@ class SubTitleForm(forms.ModelForm):
 SubTitleFormset = formset_factory(SubTitleForm, extra=0)
 
 
-# class TextForm(forms.Form):
-#     text = forms.CharField(
-#         label='Text',
-#         widget=forms.Textarea(attrs={
-#             'class': 'form-control',
-#             'placeholder': 'Text section'
-#         })
-#     )
-#     order = OrderField(blank=True, for_fields=['post'])
-
 class TextForm(forms.ModelForm):
     order = forms.IntegerField(min_value=0, widget=forms.HiddenInput())
 
@@ -68,7 +59,6 @@ class TextForm(forms.ModelForm):
                 'placeholder': 'Text',
                 'autocomplete': 'off',
                 'rows': 1
-                # 'cols': 1,
             })
         }
 
@@ -101,7 +91,6 @@ CitationFormset = formset_factory(CitationForm, extra=0)
 
 class ImageForm(forms.ModelForm):
     order = forms.IntegerField(min_value=0, widget=forms.HiddenInput())
-    # file = forms.FileField()
 
     class Meta:
         model = Image

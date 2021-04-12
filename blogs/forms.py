@@ -13,8 +13,6 @@ class NewBlogForm(forms.ModelForm):
             initial = kwargs.get('initial', {})
             initial['tags'] = kwargs['instance'].tags.all()
             kwargs['initial'] = initial
-            print(kwargs)
-            print(initial)
         super().__init__(*args, **kwargs)
 
     def save(self, *args, author=None, commit=True, **kwargs):
@@ -33,3 +31,8 @@ class NewBlogForm(forms.ModelForm):
     class Meta:
         model = Blog
         fields = ('title', 'subtitle', 'about', 'image', 'is_active')
+        widgets = {
+            'image': forms.ClearableFileInput(attrs={
+                'class': 'cleareable-file-input'
+            })
+        }
