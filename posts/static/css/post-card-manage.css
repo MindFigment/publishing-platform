@@ -14,14 +14,6 @@
     font-size: 1rem;
 }
 
-/* .post-card-manage a {
-    font-size: 0.8rem;
-}
-
-.post-card-manage p {
-    font-size: 0.5em;
-} */
-
 .post-card-manage__content {
     grid-column-start: 2;
     grid-column-end: span 1;
@@ -31,7 +23,6 @@
     flex-direction: column;
     justify-content: flex-start;
     align-content: center;
-    /* margin: 0.5rem; */
     padding: 0.5rem;
 }
 

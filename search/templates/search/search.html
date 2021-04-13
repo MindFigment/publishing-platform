@@ -4,11 +4,18 @@
 {% block title %}Search{% endblock %}
 
 {% block css%}
-<link href="{% static '/css/search.css' %}" rel="stylesheet">
+<link href="{% static '/css/search.css' %}" rel="stylesheet" defer>
+<link href="{% static '/css/write-story.css' %}" rel="stylesheet" defer>
+<link href="{% static '/css/display-story.css' %}" rel="stylesheet" defer>
+<link href="{% static '/css/post-card-detailed.css' %}" rel="stylesheet" defer>
+<link href="{% static '/css/blogs.css' %}" rel="stylesheet" defer>
+<link href="{% static '/css/blog-card-detailed.css' %}" rel="stylesheet" defer>
 {% endblock %}
 
 {% block javascript %}
 <script src="{% static '/js/search.js' %}" type='application/javascript' defer></script>
+<script src="{% static '/js/post-card-detailed.js' %}" type='application/javascript' defer></script>
+<script src="{% static 'js/blog-card-detailed.js' %}" type="text/javascript" defer></script>
 {% endblock %}
 
 {% block content %}
@@ -29,7 +36,7 @@
         {% if post_results %}
           <p>Found {{ n_posts }} post{{ n_posts|pluralize }}: </p>
           {% for post in post_results %}
-            <h4><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h4>
+            <post-card-detailed postdata="{{ post }}"></post-card-detailed>
           {% endfor %}
         {% else %}
           <p>No posts found for your query.</p>
@@ -42,7 +49,7 @@
         {% if blog_results %}
         <p>Found {{ n_blogs }} blog{{ n_blogs|pluralize }}: </p>
           {% for blog in blog_results %}
-            <h4><a href="{{ blog.get_absolute_url }}">{{ blog.title }}</a></h4>
+            <blog-card-detailed blogdata="{{ blog }}"></blog-card-detailed>
           {% endfor %}
         {% else %}
             <p>No blogs found for your query.</p>

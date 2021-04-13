@@ -1,8 +1,10 @@
+import json
 from django.shortcuts import render
 
 from .searcher import Searcher
 from .forms import SearchForm
 from .utils import get_search_params
+from common.encoders import ExtendedEncoder
 
 
 def search_blogs_and_posts(request):
@@ -34,6 +36,12 @@ def search_blogs_and_posts(request):
                 )
                 blog_results = blog_searcher.most_similar(20)
                 search_blogs = True
+
+            post_results = [json.dumps(p, cls=ExtendedEncoder)
+                            for p in post_results]
+
+            blog_results = [json.dumps(b, cls=ExtendedEncoder)
+                            for b in blog_results]
 
     return render(request,
                   'search/search.html',

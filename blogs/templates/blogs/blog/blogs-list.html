@@ -1,61 +1,19 @@
-{% extends "base.html" %}
-{% load thumbnail %}
+{% extends "blogs-base.html" %}
+{% load static %}
 
-{% block title %}Blogs{% endblock %}
+{% block title %}All active blogs{% endblock %}
 
-<!-- <img src="{{ blog.image|thumbnail_url:'avatar' }}" alt="" /> -->
-
-{% block content %}
-<h1>Blogs</h1>
-<!-- <div id="people-list">
-    {% for blog in blogs %}
-    <div class="user">
-        <a href="{{ blog.get_absolute_url }}">
-            <img src="{% thumbnail blog.image 140x140 crop %}">
-           
-</a>
-<div class="info">
-    <a href="{{ blog.get_absolute_url }}" class="title">
-        {{ blog.title }}
-    </a>
-</div>
-</div>
-{% endfor %}
-</div>
-
-<h1>Images bookmarked</h1> -->
-<div id="image-list">
-    {% include "blogs/blog/blogs_ajax_list.html" %}
-</div>
-
+{% block css %}
+<link href="{% static '/css/blogs.css' %}" rel="stylesheet">
+<link href="{% static '/css/blog-card-detailed.css' %}" rel="stylesheet" defer>
 {% endblock %}
 
 {% block javascript %}
-<script>
-    $(document).ready(function () {
-        console.log('dom')
-        let page = 1;
-        let empty_page = false;
-        let block_request = false;
+<script src="{% static 'js/blog-card-detailed.js' %}" type="text/javascript" defer></script>
+<script src="{% static 'js/fetch-detailed-blogs.js' %}" type="text/javascript" defer></script>
+{% endblock %}
 
-        $(window).scroll(function () {
-            let margin = $(document).height() - $(window).height() - 200;
-            if ($(window).scrollTop() > margin && empty_page === false &&
-                block_request === false) {
-                page += 1;
-                $.get('?page=' + page, function (data) {
-                    if (data === '') {
-                        empty_page = true;
-                        console.log('empty')
-                    }
-                    else {
-                        block_request = false;
-                        $('#image-list').append(data);
-                        console.log('blogs', data)
-                    }
-                });
-            }
-        })
-    });
-</script>
+{% block content %}
+<h1>All active blogs</h1>
+<div class="blogs-list-detailed"></div>
 {% endblock %}

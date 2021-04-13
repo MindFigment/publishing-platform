@@ -7,6 +7,12 @@
 <link href="{% static '/css/post-card-detailed.css' %}" rel="stylesheet" defer>
 {% endblock %}
 
+{% block javascript %}
+{{ post.slug|json_script:"post-data" }}
+<script src="{% static 'js/post-card-detailed.js' %}" type="text/javascript" defer></script>
+<script src="{% static 'js/find-similar-posts.js' %}" type="text/javascript" defer></script>
+{% endblock %}
+
 {% block title %}{{ post.title }}{% endblock %}
 
 {% block content %}
@@ -39,9 +45,4 @@
 </div>
 <hr>
 
-{% endblock %}
-
-{% block javascript %}
-{{ post.slug|json_script:"post-data" }}
-<script src="{% static 'js/find-similar-posts.js' %}" type="text/javascript" defer></script>
 {% endblock %}

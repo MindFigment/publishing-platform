@@ -4,9 +4,6 @@ from django.db.models.functions import Greatest
 
 from django.contrib.postgres.search import TrigramSimilarity
 
-from itertools import chain
-from operator import attrgetter
-
 
 class Searcher:
     def __init__(self, query_string, search_model, uni_fields=[], agg_fields=[], similarity_threshold=0.1):

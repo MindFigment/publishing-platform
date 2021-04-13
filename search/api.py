@@ -6,7 +6,7 @@ from django.views.decorators.http import require_http_methods
 
 from posts.models import Post
 from .searcher import Searcher
-from .encoders import ExtendedEncoder
+from common.encoders import ExtendedEncoder
 from .utils import build_query
 
 

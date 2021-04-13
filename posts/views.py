@@ -26,6 +26,12 @@ def post_detail(request, year, month, day, slug):
                   {'post': post})
 
 
+def post_list(request):
+    return render(request,
+                  'posts/post/posts-list.html',
+                  {})
+
+
 @login_required
 def delete_post(request, post_id):
     post = get_object_or_404(Post.objects.all(), id=post_id)

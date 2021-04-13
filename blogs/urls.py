@@ -1,6 +1,7 @@
 from django.urls import path
 
 from . import views
+from . import api
 
 
 app_name = 'blogs'
@@ -15,4 +16,5 @@ urlpatterns = [
     path('follow/', views.blog_follow, name='blog_follow'),
     path('<slug:slug>/followers', views.blog_followers, name='blog_followers'),
     path('<slug:slug>/', views.blog_detail, name='blog_detail'),
+    path('detailed', api.get_detailed_blogs, name='blog_detailed'),
 ]

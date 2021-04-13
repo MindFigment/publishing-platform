@@ -1,0 +1,34 @@
+{% load thumbnail %}
+{% load static %}
+
+
+<a href="{{ blog.get_absolute_url }}">
+  <div class="blog-card-simple">
+    <div class="blog-card-simple__avatar">
+      {% if blog.image.url %}
+        {% thumbnail blog.image 300x190 crop="smart" as im %}
+        <img src="{{ im.url }}">
+      {% endif %}
+    </div>
+    <div class="blog-card-simple__content">
+      <div class="blog-simple__title">
+        {{ blog.title }}
+      </div>
+      <div class="blog-simple__about">
+        {{ blog.about|truncatechars:50 }}
+      </div>
+      <div class="blog-simple__tags">
+        {% if blog.tags.slugs %}
+        {% for tag in blog.tags.slugs %}
+        <span>#{{ tag }}</span>
+        {% endfor %}
+        {% else %}
+        <span>No tags yet</span>
+        {% endif %}
+      </div>
+      <div class="blog-simple__published">
+        Created {{ blog.created|date }}
+      </div>
+    </div>
+  </div>
+</a>

@@ -12,6 +12,10 @@
     overflow: hidden;
 }
 
+.post-card-detailed:hover {
+    box-shadow: 0 8px 16px -8px rgba(0, 0, 0, 0.6);
+}
+
 .post-card-detailed__content {
     grid-column-start: 2;
     grid-column-end: span 1;

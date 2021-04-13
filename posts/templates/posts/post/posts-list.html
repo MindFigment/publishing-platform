@@ -1,25 +1,20 @@
-{% extends "post_base.html" %}
+{% extends "posts-base.html" %}
+{% load static %}
 
-{% block title %}My Posts{% endblock %}
+{% block title %}All published posts{% endblock %}
+
+{% block css %}
+<link href="{% static '/css/write-story.css' %}" rel="stylesheet" defer>
+<link href="{% static '/css/display-story.css' %}" rel="stylesheet" defer>
+<link href="{% static '/css/post-card-detailed.css' %}" rel="stylesheet" defer>
+{% endblock %}
+
+{% block javascript %}
+<script src="{% static 'js/post-card-detailed.js' %}" type="text/javascript" defer></script>
+<script src="{% static 'js/fetch-detailed-posts.js' %}" type="text/javascript" defer></script>
+{% endblock %}
 
 {% block content %}
-<h1>My Posts</h1>
-<div class="module">
-  {% for post in posts %}
-  <div class="course-info">
-    <h3>{{ post.title }}</h3>
-    <p>
-      <a href="{% url 'post_edit' post.id %}">Edit</a>
-      <a href="{% url 'post_delete' post.id %}">Delete</a>
-    </p>
-  </div>
-  {% empty %}
-  <p>You haven't created any posts yet.</p>
-  {% endfor %}
-  <p>
-    <a href="{% url 'post_create' %}" class="button">
-      Create new post
-    </a>
-  </p>
-</div>
+<h1>All published posts</h1>
+<div class="posts-list similar"></div>
 {% endblock %}

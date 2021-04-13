@@ -32,9 +32,7 @@ function removeStoryItemHandlerFactory(
   itemToRemoveIdentifier = '.story-content__item'
 ) {
   function removeStoryItemHandler() {
-    // event.target.parentElement.parentElement.remove();
     this.closest(itemToRemoveIdentifier).remove();
-    // event.target.parentElement.parentElement.remove()
     totalForms.value = parseInt(totalForms.value) - 1;
   }
   return removeStoryItemHandler;
@@ -87,33 +85,6 @@ function buildStoryItem(emptyForm, totalForms, removeItemHandeler) {
     textArea.addEventListener('input', autoGrowTextFieldHandler, false);
   }
 
-  // // ###############
-  // // #### IMAGE ####
-  // // ###############
-
-  // const inputFile = wrapperDiv.querySelector('input[type="file"]');
-  // if (inputFile) {
-  //   // Get input img element
-  //   // const inputFile = wrapperDiv.querySelector('input[type="file"]');
-  //   inputFile.addEventListener('change', function () {
-  //     // console.log('input file', URL.createObjectURL(inputFile.value));
-  //     if (this.files && this.files[0]) {
-  //       // Get img src element
-  //       let img = wrapperDiv.querySelector('img');
-  //       img.onload = () => {
-  //         console.log('img', img, new Image(), this.files);
-  //         console.log(img.width + 'x' + img.height);
-  //         // img.width = 200;
-  //         // img.height = 200;
-  //         // im = img;
-  //         // URL.revokeObjectURL(img.src); // no longer needed, free memory
-  //       };
-  //       // img.src = this.value;
-  //       img.src = URL.createObjectURL(this.files[0]); // set src to blob url
-  //     }
-  //   });
-  // }
-
   return storyItemDiv;
 }
 
@@ -132,12 +103,8 @@ function buildImagePreview(inputFile) {
         img.onload = () => {
           console.log('img', img, new Image(), this.files);
           console.log(img.width + 'x' + img.height);
-          // img.width = 200;
-          // img.height = 200;
-          // im = img;
           URL.revokeObjectURL(img.src); // no longer needed, free memory
         };
-        // img.src = this.value;
         img.src = URL.createObjectURL(this.files[0]); // set src to blob url
       }
     });
@@ -199,7 +166,6 @@ let dragging, draggedOver;
 // to indicate that you cannot drop the element on itself.
 function dragStartHandler() {
   dragging = this;
-  // console.log('dragstart', dragging);
 }
 
 // After the dragstart event fires, the drag event fires repeatedly as
@@ -226,11 +192,6 @@ function dragEndHandler() {
 // The dragenter event fires as soon as you drag the element over a
 // drop target.
 function dragEnterHandler(event) {
-  // console.log('dragenter');
-  // if (event.stopPropagation) {
-  //   event.stopPropagation(); // stops the browser from redirecting.
-  // }
-  // event.preventDefault();
   if (event.target === this) {
     // this.classList.add('story-content__item--dragged-over');
     // console.log('added class');
@@ -249,13 +210,6 @@ function dragOverHandler(event) {
 // When you drag the element outside of the boundary of the drop target,
 // the dragover event stops firing and the dragleave event fires.
 function dragLeaveHandler(event) {
-  // console.log('dragleave');
-  // if (event.stopPropagation) {
-  //   event.stopPropagation(); // stops the browser from redirecting.
-  //   console.log('stop propagation');
-  // }
-  // console.log(event.target);
-  // console.log(event.target, this, event.target === this);
   if (event.target === this) {
     // this.classList.remove('story-content__item--dragged-over');
     // console.log('removed class');
@@ -275,8 +229,6 @@ function dropHandler(event) {
 
   draggedOver = this;
 
-  console.log('AAAAAAAAAAAAAABBBBBBBBBB', dragging !== draggedOver);
-
   if (dragging !== draggedOver) {
     let draggingDOMRect = event.target.getBoundingClientRect();
     let draggedOverDOMRect = draggedOver.getBoundingClientRect();
@@ -287,10 +239,6 @@ function dropHandler(event) {
       draggedOverMiddle > draggingMiddle
         ? draggedOver.insertAdjacentElement('beforebegin', dragging)
         : draggedOver.insertAdjacentElement('afterend', dragging);
-
-    console.log('dragging middle', draggingMiddle);
-    console.log('dragged middle', draggedOverMiddle);
-    console.log('inserted', insertedStoryItem);
   }
 
   return false;
@@ -323,21 +271,15 @@ function setStoryItemOrderBeforeSubmit(event) {
     orderInp.value = order;
     order++;
   });
-  console.log('order inpts', orderInps);
   orderInps.forEach((o_i) => console.log(oi_, o_i.value));
-  // event.preventDefault();
 }
+
 const submitStoryInp = document.querySelector('#story-form');
-console.log('submitStoryInp', submitStoryInp);
 submitStoryInp.addEventListener('submit', setStoryItemOrderBeforeSubmit, false);
 
 function autoGrowTextFieldHandler() {
   this.style.height = 0;
   this.style.height = this.scrollHeight + 'px';
-  console.log(this, this.scrollHeight, this.clientHeight, this.rows);
-  // if (this.scrollTop != 0) {
-
-  // }
 }
 
 const titleTextarea = document.querySelector('.form-story-title');
