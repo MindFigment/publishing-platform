@@ -1,8 +1,51 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Dashboard{% endblock %}
 
+{% block css%}
+<link href="{% static '/css/write-story.css' %}" rel="stylesheet" defer>
+<link href="{% static '/css/display-story.css' %}" rel="stylesheet" defer>
+<link href="{% static '/css/post-card-detailed.css' %}" rel="stylesheet" defer>
+<link href="{% static '/css/blogs.css' %}" rel="stylesheet" defer>
+<link href="{% static '/css/blog-card-detailed.css' %}" rel="stylesheet" defer>
+{% endblock %}
+
+{% block javascript %}
+<script src="{% static '/js/post-card-detailed.js' %}" type='application/javascript' defer></script>
+<script src="{% static '/js/blog-card-detailed.js' %}" type="application/javascript" defer></script>
+<script src="{% static '/account/js/dashboard.js' %}" type='application/javascript' defer></script>
+{% endblock %}
+
 {% block content %}
+
 <h1>Dashboard</h1>
-<p>Welcome to your dashboard.</p>
+<p>Welcome to your dashboard. </p>
+<p>Here you can see what people you follow are posting</p>
+
+<div class="buttons">
+  <button class="posts-button" disabled>Posts</button>
+  <button class="blogs-button">Blogs</button>
+</div>
+
+<div class="posts-detailed-list">
+  {% if post_results %}
+    {% for post in post_results %}
+    <post-card-detailed postdata="{{ post }}"></post-card-detailed>
+    {% endfor %}
+  {% else %}
+    <p>No posts found for blogs you follow</p>
+  {% endif %}
+</div>
+
+<div class="blogs-detailed-list hidden">
+  {% if blog_results %}
+    {% for blog in blog_results %}
+    <blog-card-detailed blogdata="{{ blog }}"></blog-card-detailed>
+    {% endfor %}
+  {% else %}
+    <p>You don't follow any blogs</p>
+  {% endif %}
+</div>
+
 {% endblock %}

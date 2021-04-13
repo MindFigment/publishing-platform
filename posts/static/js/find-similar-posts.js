@@ -31,7 +31,6 @@ function createPostCardDetailed(postData) {
   postCardDiv = document.createElement('div');
   let postCardDetailed = document.createElement('post-card-detailed');
   postCardDetailed.setPostData(postData);
-  console.log(postCardDetailed);
   similarDiv.append(postCardDetailed);
 }
 

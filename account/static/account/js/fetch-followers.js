@@ -13,7 +13,6 @@ async function getNextFollowersHandler() {
     0;
 
   if (fireFetch && blockRequest === false) {
-    console.log('sending request');
     blockRequest = true;
 
     let response = await fetch(

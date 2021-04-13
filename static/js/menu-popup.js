@@ -14,6 +14,7 @@ function closeMenuPopupHandler(event) {
     menuPopup.classList.add('fade');
 }
 
-heroImg.addEventListener('click', fadeToggleHandler, false);
-
-window.addEventListener('mouseup', closeMenuPopupHandler, false);
+if (heroImg) {
+  heroImg.addEventListener('click', fadeToggleHandler, false);
+  window.addEventListener('mouseup', closeMenuPopupHandler, false);
+}

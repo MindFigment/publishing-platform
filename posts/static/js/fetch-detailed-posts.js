@@ -14,7 +14,6 @@ async function getNextPostsHandler() {
     0;
 
   if (fireFetch && blockRequest === false) {
-    console.log('sending request');
     blockRequest = true;
 
     let response = await fetch(
@@ -56,7 +55,6 @@ function createPostCardDetailed(postData) {
   postCardDiv = document.createElement('div');
   let postCardDetailed = document.createElement('post-card-detailed');
   postCardDetailed.setPostData(postData);
-  console.log(postCardDetailed);
   postsList.append(postCardDetailed);
 }
 

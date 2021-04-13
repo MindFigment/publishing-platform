@@ -14,7 +14,6 @@ async function getNextBlogsHandler() {
     0;
 
   if (fireFetch && blockRequest === false) {
-    console.log('sending request');
     blockRequest = true;
 
     let response = await fetch(
@@ -56,7 +55,6 @@ function createBlogCardDetailed(blogData) {
   blogCardDiv = document.createElement('div');
   let blogCardDetailed = document.createElement('blog-card-detailed');
   blogCardDetailed.setBlogData(blogData);
-  console.log(blogCardDetailed);
   blogsList.append(blogCardDetailed);
 }
 

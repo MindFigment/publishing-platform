@@ -1,3 +1,5 @@
+import json
+from posts.models import Post
 from django.core.paginator import EmptyPage, InvalidPage, Paginator
 from django.http import HttpResponse
 from django.shortcuts import render
@@ -6,6 +8,7 @@ from django.views.decorators.http import require_GET
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 
+from common.encoders import ExtendedEncoder
 from .models import Profile
 from .forms import LoginForm, UserRegistrationForm, UserEditForm, ProfileEditForm
 
@@ -33,9 +36,25 @@ def user_login(request):
 
 @login_required
 def dashboard(request):
+
+    profile = request.user.profile
+    blog_results = profile.following.exclude(
+        author=profile.pk).order_by('-created')
+    post_results = Post.published.filter(
+        blog__in=blog_results).order_by('-publish')
+
+    post_results = [json.dumps(p, cls=ExtendedEncoder)
+                    for p in post_results]
+
+    blog_results = [json.dumps(b, cls=ExtendedEncoder)
+                    for b in blog_results]
+
     return render(request,
                   'account/dashboard.html',
-                  {'section': 'dashboard'})
+                  {
+                      'post_results': post_results,
+                      'blog_results': blog_results,
+                  })
 
 
 def register(request):

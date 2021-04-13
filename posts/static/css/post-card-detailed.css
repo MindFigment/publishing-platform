@@ -1,3 +1,9 @@
+.posts-detailed-list {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+}
+
 .post-card-detailed {
     width: 600px;
     height: 200px;
