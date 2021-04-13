@@ -74,23 +74,25 @@
 }
 
 .follower {
-    width: 100%;
-    padding: 10px;
-    /* height: 300px;
-    background-color: #134b2d; */
-    margin: 10px;
-    height: 50px;
+    width: 20rem;
+    margin: 0.5rem 0;
+    height: 45px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
 }
 
-/* .follower img {
-    border-radius: 50%;
-} */
+.follower:hover {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4);
+}
 
-/* .info {
+.follower img {
+    border-radius: 50%;
+}
+
+.info {
     display: grid;
-    grid-template-rows: 50px;
-    grid-template-columns: 50px 1fr;
-} */
+    grid-template-rows: 45px;
+    grid-template-columns: 45px 1fr 2rem;
+}
 
 .info-image {
     grid-column-start: 1;
@@ -110,11 +112,15 @@
 .info-first-row {
     margin-top: auto;
     margin-bottom: auto;
+    font-size: 0.8rem;
 }
 
 .info-second-row {
     margin-top: auto;
     margin-bottom: auto;
+    font-size: 0.7rem;
+    font-weight: lighter;
+    font-style: italic;
 }
 
 .image-container {
@@ -136,4 +142,13 @@
 .action .date {
     font-style: italic;
     color: #ccc;
+}
+
+.new-follower {
+    color: rgba(216, 34, 34, 0.801);
+    font-weight: bolder;
+    font-size: 0.55rem;
+    grid-column-start: 3;
+    grid-column-end: span 1;
+    margin: 0.25rem 0.25rem 0 0;
 }

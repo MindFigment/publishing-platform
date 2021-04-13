@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models.expressions import Expression, F, Value
 from django.urls import reverse
 
 from account.models import Profile
@@ -44,10 +45,10 @@ class Blog(models.Model):
                        args=[self.slug])
 
     def get_new_followers(self):
-        return FollowRelationship.objects.seen(blog_id=self.id)
+        return FollowRelationship.objects.notseen(blog_id=self.id).annotate(old=F('seen'))
 
     def get_old_followers(self):
-        return FollowRelationship.objects.notseen(blog_id=self.id)
+        return FollowRelationship.objects.seen(blog_id=self.id).annotate(old=F('seen'))
 
     def set_followers_as_old(self, followers):
         for follower in followers:

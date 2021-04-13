@@ -1,0 +1,19 @@
+{% load thumbnail %}
+{% load custom_filters %}
+
+{% for follower in followers %}
+<div class="follower">
+  <a href="{{ follower.profile.get_absolute_url }}">
+    <div class="info">
+      <img src="{% thumbnail follower.profile.photo 38x38 crop %}" class="info-image">
+      <div class="info-text">
+        <div class="info-first-row">{{ follower.profile.user.username.capitalize }}</div>
+        <div class="info-second-row"> Followed {% if not blog %} <span class="emphasis">{{ follower.blog.title }}</span> {% endif %} {{ follower.created|time_passed }}</div>
+      </div>
+      {% if not follower.old %}
+        <div class="new-follower">NEW!</div>
+      {% endif %}
+    </div>
+  </a>
+</div>
+{% endfor %}

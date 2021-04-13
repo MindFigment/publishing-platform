@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.db.models.expressions import Expression, F, Value
 from django.urls import reverse
 from django.db.models import Count
 from django.apps import apps
@@ -38,8 +39,10 @@ class Profile(models.Model):
             blog__author__user=self.user
         )
 
-        new_followers = followers.filter(seen=False)
-        old_followers = followers.filter(seen=True)
+        new_followers = followers.filter(
+            seen=False).annotate(old=F('seen'))
+        old_followers = followers.filter(seen=True).annotate(
+            old=F('seen'))
 
         return old_followers, new_followers
 

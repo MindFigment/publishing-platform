@@ -25,7 +25,7 @@ a:hover {
     color: rgb(158, 138, 48)
 }
 
-a.emphasis {
+.emphasis {
     font-weight: 600;
 }
 

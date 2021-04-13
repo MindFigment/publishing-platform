@@ -6,6 +6,7 @@
 
 {% block javascript %}
 <script src="{% static 'js/get-cookie.js' %}" type="text/javascript" defer></script>
+<script src="{% static 'js/delete-modal.js' %}" type="text/javascript" defer></script>
 <script src="{% static 'js/delete-blog.js' %}" type="text/javascript" defer></script>
 {% endblock %}
 
@@ -118,16 +119,9 @@
   </div>
 </section>
 
-<div class="modal-background hidden">
-  <div class="delete-modal">
-    <div class="close-modal"><span>X</span></div>
-    <div class="modal-content">
-      <h2>Delete</h2>
-      <p>Are you sure you want to this?</p>
-      <button type="button" class="cancel-modal-button">Cancel</button>
-      <button type="button" class="delete-blog-button delete">Delete</button>
-    </div>
-  </div>
-</div>
+<delete-modal 
+  url="http://127.0.0.1:8000/blogs/delete/" 
+  data-object="blog">
+</delete-modal>
 
 {% endblock %}

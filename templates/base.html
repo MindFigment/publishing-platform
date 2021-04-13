@@ -18,7 +18,7 @@
         <div class="nav">
             <div class="logo-wrapper"><a href="{% url 'blogs:blog_list' %}"><img src="{% static '/img/logo.png' %}" alt="logo" /></a></div>
             {% if request.user.is_authenticated and request.user.profile.get_new_followers_count > 0 %}
-            <a href="{% url 'user_followers' %}">{{ request.user.profile.get_new_followers_count }} new followers</a>
+            <a href="{% url 'user_followers' %}"><p>{{ request.user.profile.get_new_followers_count }} new follower{{ request.user.profile.get_new_followers_count|pluralize }}</p></a>
             {% endif %}
             <a href="{% url 'search:search_blogs_and_posts' %}" class="move-right"><p>Search</p></a>
             <a href="{% url 'blogs:blog_list' %}"><p>Blogs</p></a>

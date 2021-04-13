@@ -143,26 +143,24 @@ def blog_followers(request, slug):
     blog = get_object_or_404(Blog.objects.all(), slug=slug)
     old_followers = blog.get_old_followers()
     new_followers = blog.get_new_followers()
+    all_followers = new_followers | old_followers
 
-    old_paginator = Paginator(old_followers, 5)
-    new_paginator = Paginator(new_followers, 5)
+    print('new followers', new_followers)
+    print('old followers', old_followers)
 
-    print('old', old_followers)
-    print('new', new_followers)
+    paginator = Paginator(all_followers, 5)
 
     is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
 
     if is_ajax:
         page = request.GET.get('page')
-        new_or_old = request.GET.get('which')
-        print('page', page, new_or_old)
         try:
-            if new_or_old == 'NEW':
-                followers = new_paginator.page(page)
-            else:
-                followers = old_paginator.page(page)
+            followers = list(paginator.page(page))
         except InvalidPage:
             return HttpResponse('')
+
+        blog.set_followers_as_old(new_followers)
+
         return render(request,
                       'account/profile/followers-ajax-list.html',
                       {
@@ -171,18 +169,15 @@ def blog_followers(request, slug):
                       })
     else:
         try:
-            new_followers = new_paginator.page(1)
+            followers = list(paginator.page(1))
         except EmptyPage:
             new_followers = []
-        try:
-            old_followers = old_paginator.page(1)
-        except EmptyPage:
-            old_followers = []
+
+    blog.set_followers_as_old(new_followers)
 
     return render(request,
                   'account/profile/followers-list.html',
                   {
                       'blog': blog,
-                      'new_followers': new_followers,
-                      'old_followers': old_followers,
+                      'followers': followers
                   })

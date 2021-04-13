@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load custom_filters %}
+{% load thumbnail %}
+{% load static %}
+
+{% block css %}
+<link href="{% static 'account/css/account.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block javascript %}
+<script src="{% static 'account/js/fetch-followers.js' %}" type='application/javascript' defer></script>
+{% endblock %}
+
+{% block title %}Followers{% endblock %}
+
+{% block content %}
+
+{% if blog %}
+  <h1> {{ blog.title }} blog followers</h1>
+{% else %}
+  <h1> All your ({{ request.user.username }}) followers</h1>
+{% endif %}
+
+<div class="followers-list">
+  {% for follower in followers %}
+    <div class="follower">
+      <a href="{{ follower.profile.get_absolute_url }}">
+        <div class="info">
+          <img src="{% thumbnail follower.profile.photo 38x38 crop %}" class="info-image">
+          <div class="info-text">
+            <div class="info-first-row">{{ follower.profile.user.username.capitalize }}</div>
+            <div class="info-second-row"> Followed {% if not blog %} <span class="emphasis">{{ follower.blog.title }}</span> {% endif %} {{ follower.created|time_passed }}</div>
+          </div>
+          {% if not follower.old %}
+            <div class="new-follower">NEW!</div>
+          {% endif %}
+        </div>
+      </a>
+    </div>
+  {% endfor %}
+</div>
+
+{% if blog %}
+  <div data-url="{% url 'blogs:blog_followers' blog.slug %}" id="url"></div>
+{% else %}
+  <div data-url="{% url 'user_followers' %}" id="url"></div>
+{% endif %}
+
+{% endblock %}

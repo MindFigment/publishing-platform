@@ -93,44 +93,37 @@ def profile_detail(request, username):
 def user_followers(request):
     profile = request.user.profile
     old_followers, new_followers = profile.get_old_and_new_followers()
-
-    old_paginator = Paginator(old_followers, 5)
-    new_paginator = Paginator(new_followers, 5)
+    all_followers = new_followers | old_followers
+    paginator = Paginator(all_followers, 5)
 
     is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
 
     if is_ajax:
         page = request.GET.get('page')
-        new_or_old = request.GET.get('which')
         try:
-            if new_or_old == 'NEW':
-                followers = new_paginator.page(page)
-                profile.set_followers_as_old(followers)
-            else:
-                followers = old_paginator.page(page)
+            followers = list(paginator.page(page))
         except InvalidPage:
             return HttpResponse('')
+
+        profile.set_followers_as_old(new_followers)
+
         return render(request,
-                      'account/profile/followers_ajax_list.html',
+                      'account/profile/followers-ajax-list.html',
                       {
                           'blog': False,
                           'followers': followers
                       })
     else:
         try:
-            old_followers = old_paginator.page(1)
+            followers = list(paginator.page(1))
         except EmptyPage:
-            old_followers = []
-        try:
-            new_followers = new_paginator.page(1)
-            profile.set_followers_as_old(new_followers)
-        except EmptyPage:
-            new_followers = []
+            followers = []
+
+    profile.set_followers_as_old(new_followers)
 
     return render(request,
-                  'account/profile/followers_list.html',
+                  'account/profile/followers-list.html',
                   {
                       'blog': False,
-                      'new_followers': new_followers,
-                      'old_followers': old_followers,
+                      'followers': followers,
                   })
