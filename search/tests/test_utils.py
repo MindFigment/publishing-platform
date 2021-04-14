@@ -4,7 +4,7 @@ from model_bakery import baker
 
 from tags.models import Tag
 from search.utils import get_ngrams, normalize_query
-from search.models import Searcher
+from search.searcher import Searcher
 
 
 class NormalizeQueryTestCase(TestCase):
@@ -68,52 +68,36 @@ class SearcherTestCase(TestCase):
     def setUp(self):
         self.blog_1 = baker.make(
             'Blog',
-            title='Deep Code',
+            title='Deep Neural Networks',
             author__user__email='a@gmail.com'
         )
         self.blog_2 = baker.make(
             'Blog',
-            title='Rise of Networks',
+            title='Rise and Fall of Networks',
             author__user__email='b@gmail.com'
         )
-        self.blog_3 = baker.make(
-            'Blog',
-            title='Deep Neural Networks',
-            author__user__email='c@gmail.com'
-        )
-        self.blog_4 = baker.make(
-            'Blog',
-            title='Rise of Networking',
-            author__user__email='d@gmail.com'
-        )
-
-        self.post_1 = baker.make('Post', blog=self.blog_1)
-        self.post_2 = baker.make('Post', blog=self.blog_1)
-        self.post_3 = baker.make('Post', blog=self.blog_1)
 
     def test_title_similarity(self):
-        tags = ['jazz', 'music', 'world', 'cat', 'category']
+        tags = ['rise', 'fall', 'of', 'networks', 'random']
         tags = Tag.tags.add(*tags)
 
         self.blog_1.tags.add(*tags)
-        self.blog_2.tags.add(tags[0])
-        self.blog_3.tags.add(*tags[1:])
+        self.blog_2.tags.add(*tags)
 
-        self.post_1.tags.add(*tags)
-        self.post_2.tags.add(*tags)
-        self.post_3.tags.add(*tags[2:])
-
-        querystring = 'Rise and Fall of Networks, jazz, world, category'
+        querystring = 'Rise and Fall'
         searcher_1 = Searcher(querystring,
+                              'blogs.Blog',
+                              ['title'],
+                              [])
+
+        searcher_2 = Searcher(querystring,
                               'blogs.Blog',
                               ['title'],
                               ['tags__name'])
 
-        searcher_2 = Searcher(querystring,
-                              'posts.Post',
-                              ['title'],
-                              ['tags__name'])
+        max_1 = searcher_1.most_similar(1).values(
+            'max_similarity')[0]['max_similarity']
+        max_2 = searcher_2.most_similar(1).values(
+            'max_similarity')[0]['max_similarity']
 
-        print(searcher_1.most_similar(5).values('title', 'max_similarity'))
-        print(searcher_2.most_similar(5).values('title', 'max_similarity'))
-        print(searcher_1.merge_into_list(searcher_2))
+        self.assertGreater(max_2, max_1)

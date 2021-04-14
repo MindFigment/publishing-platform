@@ -51,35 +51,35 @@ class FollowRelationshipTestCase(TestCase):
         self.assertEqual(self.blog_2.followers.count(), 3)
 
     def test_seen_followers_retrieved(self):
-        seen_followers_1 = self.blog_1.get_seen_followers()
+        seen_followers_1 = self.blog_1.get_old_followers()
         self.assertEqual(seen_followers_1.count(), 3)
 
-        seen_followers_2 = self.blog_2.get_seen_followers()
+        seen_followers_2 = self.blog_2.get_old_followers()
         self.assertEqual(seen_followers_2.count(), 1)
 
     def test_notseen_followers_retrieved(self):
-        notseen_followers_1 = self.blog_1.get_notseen_followers()
+        notseen_followers_1 = self.blog_1.get_new_followers()
         self.assertEqual(notseen_followers_1.count(), 2)
 
-        notseen_followers_2 = self.blog_2.get_notseen_followers()
+        notseen_followers_2 = self.blog_2.get_new_followers()
         self.assertEqual(notseen_followers_2.count(), 2)
 
     def test_set_seen_followers_as_seen(self):
-        seen_followers = self.blog_1.get_seen_followers()
+        seen_followers = self.blog_1.get_old_followers()
         self.assertEqual(seen_followers.count(), 3)
-        self.blog_1.set_followers_as_seen(seen_followers)
+        self.blog_1.set_followers_as_old(seen_followers)
 
-        seen_followers_ = self.blog_1.get_seen_followers()
+        seen_followers_ = self.blog_1.get_old_followers()
         self.assertEqual(seen_followers_.count(), 3)
 
     def test_set_notseen_followers_as_seen(self):
-        notseen_followers = self.blog_1.get_notseen_followers()
-        seen_followers = self.blog_1.get_seen_followers()
+        notseen_followers = self.blog_1.get_new_followers()
+        seen_followers = self.blog_1.get_old_followers()
         self.assertEqual(seen_followers.count(), 3)
         self.assertEqual(notseen_followers.count(), 2)
-        self.blog_1.set_followers_as_seen(notseen_followers)
+        self.blog_1.set_followers_as_old(notseen_followers)
 
-        seen_followers = self.blog_1.get_seen_followers()
-        notseen_followers = self.blog_1.get_notseen_followers()
+        seen_followers = self.blog_1.get_old_followers()
+        notseen_followers = self.blog_1.get_new_followers()
         self.assertEqual(seen_followers.count(), 5)
         self.assertEqual(notseen_followers.count(), 0)

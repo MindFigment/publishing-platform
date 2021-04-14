@@ -45,7 +45,7 @@
     {% endif %}
   
     {% if search_blogs %}
-      <div class="search-result-list blogs hidden">
+      <div class="search-result-list blogs {% if search_posts %}hidden{% endif %}">
         {% if blog_results %}
         <p>Found {{ n_blogs }} blog{{ n_blogs|pluralize }}: </p>
           {% for blog in blog_results %}

@@ -10,7 +10,7 @@ from common.encoders import ExtendedEncoder
 from .utils import build_query
 
 
-@ require_http_methods(['GET'])
+@require_http_methods(['GET'])
 def get_most_similar_posts(request):
     slug = request.GET.get('slug')
     n = int(request.GET.get('n'))

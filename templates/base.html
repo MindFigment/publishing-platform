@@ -16,7 +16,7 @@
     {% block header %}
     <header class="main-header">
         <div class="nav">
-            <div class="logo-wrapper"><a href="{% url 'blogs:blog_list' %}"><img src="{% static '/img/logo.png' %}" alt="logo" /></a></div>
+            <div class="logo-wrapper"><a href="{% url 'index' %}"><img src="{% static '/img/logo.png' %}" alt="logo" /></a></div>
             {% if request.user.is_authenticated and request.user.profile.get_new_followers_count > 0 %}
             <a href="{% url 'user_followers' %}"><p>{{ request.user.profile.get_new_followers_count }} new follower{{ request.user.profile.get_new_followers_count|pluralize }}</p></a>
             {% endif %}

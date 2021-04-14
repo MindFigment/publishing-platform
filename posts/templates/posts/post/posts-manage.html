@@ -28,7 +28,7 @@
 <h1>Your stories on "{{ blog.title }}"</h1>
 
 <section class="new-post">
-  <a href="{% url 'posts:post_create' blog.id %}">
+  <a href="{% url 'posts:create_post' blog.id %}">
     <button>
       New story
     </button>
@@ -49,13 +49,17 @@
       </div>
       <div class="post-card-manage__content">
         <div class="post-card-manage__title">
-          <a href="{{ blog.get_absolute_url }}">{{ post.title }}</a>
+          <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
         </div>
         <div class="panel">
           <div class="edit-delete">
-            <a href="{% url 'blogs:edit_blog' blog.slug %}" class="blog-card__button"><button class="edit-blog-btn edit">Edit</button></a>
-            <span class="blog-card__button">
-              <button data-id="{{ blog.id }}" data-title="{{ blog.title }}" class="delete-blog-btn delete">
+            <a href="{% url 'posts:edit_post' post.slug %}" class="post-card__button">
+              <button class="edit-post-btn edit">
+                Edit
+              </button>
+            </a>
+            <span class="post-card__button">
+              <button data-id="{{ post.id }}" data-title="{{ post.title }}" class="delete-post-btn delete">
                 Delete
               </button>
             </span>
@@ -88,9 +92,9 @@
         </div>
         <div class="panel">
           <div class="edit-delete">
-            <a href="{% url 'blogs:edit_blog' post.slug %}" class="blog-card__button"><button class="edit-blog-btn edit">Edit</button></a>
+            <a href="{% url 'posts:edit_post' post.slug %}" class="post-card__button"><button class="edit-post-btn edit">Edit</button></a>
             <span class="blog-card__button">
-              <button data-id="{{ post.id }}" data-title="{{ post.title }}" class="delete-blog-btn delete">
+              <button data-id="{{ post.id }}" data-title="{{ post.title }}" class="delete-post-btn delete">
                 Delete
               </button>
             </span>

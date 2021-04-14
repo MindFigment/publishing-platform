@@ -17,7 +17,8 @@ Blog {{ blog.title }} by {{ blog.author }}
 {% block content %}
 <h1>Blog "{{ blog.title }}" by {{ blog.author }}</h1>
 <section class="write-story">
-  <form id="story-form" action="{% url 'posts:create_post' blog.id %}" method="post" enctype="multipart/form-data">
+  {{ post}}
+  <form id="story-form" action="{% url 'posts:edit_post' post.slug %}" method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{ subtitle_formset.management_form }}
     {{ text_formset.management_form }}
@@ -31,8 +32,8 @@ Blog {{ blog.title }} by {{ blog.author }}
     <hr>
 
     <div class="write-story__header">
-      <h2 class="header">Write your new story below and submit when ready</h2>
-      <input id="submit-story" type="submit" value="Create story" class="create">
+      <h2 class="header">Edit your new story below and submit when ready</h2>
+      <input id="submit-story" type="submit" value="Edit story" class="create">
     </div>
 
     <div>
@@ -41,12 +42,76 @@ Blog {{ blog.title }} by {{ blog.author }}
 
     <div class="story-content">
 
-      <div class="story-content__item">
+      <div class="story-content__item title_" style="display:none">
         <div class="item__wrapper">
           {{ title_form.title }}
           {{ title_form.order }}
         </div>
       </div>
+
+      {% for form in subtitle_formset %}
+        <div class="story-content__item subtitle_" style="display:none">
+          <div class="item__wrapper">
+            {{ form.subtitle }}
+            {{ form.order }}
+          </div>
+        </div>
+      {% endfor %}
+      
+      {% for form in text_formset %}
+        <div class="story-content__item text_" style="display:none">
+          <div class="item__wrapper">
+            {{ form.text }}
+            {{ form.order }}
+          </div>
+        </div>
+      {% endfor %}
+
+      {% for form in citation_formset %}
+      <div class="story-content__item citation_" style="display:none">
+        <div class="item__wrapper">
+          {{ form.citation }}
+          {{ form.order }}
+        </div>
+      </div>
+      {% endfor %}
+
+
+      {% for form in image_formset %}
+      <div class="story-content__item image_" style="display:none">
+        <div class="item__wrapper">
+          {{ form.file }}
+          {{ form.order }}
+          <div class="img-wrapper">
+            <img id="id_image-__prefix__-src">
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+
+
+      <!-- {% for form in sorted_forms %}
+        <div class="story-content__item" draggable="true">
+          <div class="item__wrapper">
+            {% if form.type == "title" %}
+              {{ form.form.title }}
+            {% elif form.type == "text" %}
+              {{ form.form.text }}
+            {% elif form.type == "citation" %}
+              {{ form.form.citation }}
+            {% elif form.type == "image" %}
+              {{ form.form.file }}
+            {% endif %}
+
+            {{ form.form.order }}
+
+            {% if form.type != "title" %}
+              <input type="button" value="x" class="button-remove delete">
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %} -->
+
     </div>
 
     <div id="empty-subtitle-form" style="display:none">
@@ -90,6 +155,6 @@ Blog {{ blog.title }} by {{ blog.author }}
   <div>
     <hr>
   </div>
-  
+
 </section>
 {% endblock %}

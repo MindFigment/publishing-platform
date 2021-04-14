@@ -1,7 +1,6 @@
 from django import forms
 from django.forms import formset_factory
 
-from posts.models import Text
 from tags.forms import TagField
 
 from .models import Post, SubTitle, Text, Image, Citation
@@ -9,6 +8,13 @@ from .models import Post, SubTitle, Text, Image, Citation
 
 class PostForm(forms.ModelForm):
     tags = TagField(required=False)
+
+    def __init__(self, *args, **kwargs):
+        if 'instance' in kwargs:
+            initial = kwargs.get('initial', {})
+            initial['tags'] = kwargs['instance'].tags.all()
+            kwargs['initial'] = initial
+        super().__init__(*args, **kwargs)
 
     class Meta:
         model = Post
@@ -21,7 +27,7 @@ class TitleForm(forms.Form):
         label='Title',
         widget=forms.Textarea(attrs={
             'class': 'form-story-title',
-            'placeholder': 'Blog title',
+            'placeholder': 'Story title',
             'autocomplete': 'off',
             'rows': 1
         })
@@ -63,7 +69,6 @@ class TextForm(forms.ModelForm):
         }
 
     def save(self, commit=True):
-        print('order:', self.order)
         return super(Text, self).save(commit=commit)
 
 

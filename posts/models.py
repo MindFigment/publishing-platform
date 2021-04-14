@@ -1,3 +1,4 @@
+from common.utils import unique_slugify
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
@@ -88,6 +89,60 @@ class Post(models.Model):
             return image.content_object.content
         return None
 
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = unique_slugify(self, self.get_title_section()['title'])
+        super().save(*args, **kwargs)
+
+    def get_title_section(self):
+        title_id = ContentType.objects.get_for_model(Title).id
+        title = self.sections.get(content_type=title_id)
+        title_dict = {
+            'title': title.content_object.content,
+            'order': title.order,
+        }
+        return title_dict
+
+    def get_subtitle_sections(self):
+        subtitle_id = ContentType.objects.get_for_model(SubTitle).id
+        subtitles = self.sections.filter(content_type=subtitle_id)
+        subtitles_dict = [
+            {
+                'subtitle': s.content_object.content,
+                'order': s.order
+            } for s in subtitles]
+        return subtitles_dict
+
+    def get_text_sections(self):
+        text_id = ContentType.objects.get_for_model(Text).id
+        texts = self.sections.filter(content_type=text_id)
+        texts_dict = [
+            {
+                'text': t.content_object.content,
+                'order': t.order
+            } for t in texts]
+        return texts_dict
+
+    def get_citation_sections(self):
+        citation_id = ContentType.objects.get_for_model(Citation).id
+        citations = self.sections.filter(content_type=citation_id)
+        citations_dict = [
+            {
+                'citation': c.content_object.content,
+                'order': c.order
+            } for c in citations]
+        return citations_dict
+
+    def get_image_sections(self):
+        image_id = ContentType.objects.get_for_model(Image).id
+        images = self.sections.filter(content_type=image_id)
+        images_dict = [
+            {
+                'file': i.content_object.content,
+                'order': i.order
+            } for i in images]
+        return images_dict
+
     def get_absolute_url(self):
         return reverse('posts:post_detail',
                        args=[self.publish.year,
@@ -156,7 +211,7 @@ class ContentBase(models.Model):
         # Return the object if exists else None
         return self.sections_relation.first()
 
-    @property
+    @ property
     def content(self):
         pass
 
@@ -174,7 +229,7 @@ class ContentBase(models.Model):
 class Title(ContentBase):
     title = models.TextField(max_length=50)
 
-    @property
+    @ property
     def content(self):
         return self.title
 
@@ -182,7 +237,7 @@ class Title(ContentBase):
 class SubTitle(ContentBase):
     subtitle = models.TextField(max_length=100)
 
-    @property
+    @ property
     def content(self):
         return self.subtitle
 
@@ -190,7 +245,7 @@ class SubTitle(ContentBase):
 class Text(ContentBase):
     text = models.TextField()
 
-    @property
+    @ property
     def content(self):
         return self.text
 
@@ -198,7 +253,7 @@ class Text(ContentBase):
 class Citation(ContentBase):
     citation = models.TextField()
 
-    @property
+    @ property
     def content(self):
         return self.citation
 
@@ -206,6 +261,6 @@ class Citation(ContentBase):
 class Image(ContentBase):
     file = models.FileField(upload_to=get_post_image_dir_path)
 
-    @property
+    @ property
     def content(self):
         return self.file
