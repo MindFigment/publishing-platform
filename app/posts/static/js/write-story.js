@@ -143,7 +143,7 @@ function autoGrowTextField(elem) {
       elem.style.height = 0;
       elem.style.height = elem.scrollHeight + 'px';
     }
-  }, 1);
+  }, 10);
 }
 
 function compareStoryItemsOrder(item1, item2) {
@@ -164,7 +164,6 @@ function prepareStoryForEdit() {
       let wrapperDiv = storyItem.querySelector('.item__wrapper');
 
       let inputFile = storyItem.querySelector('input[type="file"]');
-      console.log(inputFile);
       if (inputFile) {
         let inputOrderHidden = storyItem.querySelector('input[type="hidden"]');
         let wrapperImg = storyItem.querySelector('.img-wrapper');

@@ -21,7 +21,7 @@ class Tag(models.Model):
 
 
 def tagged_items_changed(action, **kwargs):
-    if action == 'post_remove':
+    if action == 'post_delete':
         Tag.tags.get_tags_with_no_tagged_items().delete()
 
 
