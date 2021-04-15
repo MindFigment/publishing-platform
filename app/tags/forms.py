@@ -22,9 +22,7 @@ class TagField(forms.CharField):
         try:
             return parse_tags(value)
         except ValueError:
-            raise forms.ValidationError(
-                'You need to provide tags seperated by comma.'
-            )
+            raise forms.ValidationError("You need to provide tags seperated by comma.")
 
     def has_changed(self, initial_value, data_value):
         if self.disabled:

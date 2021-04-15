@@ -1,10 +1,17 @@
+import re
+
 from django.core.checks.messages import Error
 from django.template.defaultfilters import slugify
 
-import re
 
-
-def unique_slugify(instance, values, queryset=None, slug_field_name='slug', slug_seperator='-', max_num=1000):
+def unique_slugify(
+    instance,
+    values,
+    queryset=None,
+    slug_field_name="slug",
+    slug_seperator="-",
+    max_num=1000,
+):
     slug_field = instance._meta.get_field(slug_field_name)
     max_len = slug_field.max_length
     slug = slugify(values)
@@ -22,22 +29,22 @@ def unique_slugify(instance, values, queryset=None, slug_field_name='slug', slug
     num = 1
     while len(queryset.filter(**{slug_field_name: slug})) != 0:
         slug = original_slug
-        end = f'{slug_seperator}{num}'
+        end = f"{slug_seperator}{num}"
         if len(slug) + len(end) > max_len:
             overflow = len(slug) + len(end) - max_len
             slug = slug[:-overflow]
 
-        slug = ''.join([slug, end])
+        slug = "".join([slug, end])
 
         num += 1
         if num > max_num:
-            raise Error(f'Over {max_num} slugs with the same base!')
+            raise Error(f"Over {max_num} slugs with the same base!")
 
     return slug
 
 
 def add_markdown_to_links(text=None):
-    regex = r'''(
+    regex = r"""(
                 # scheme:// (https://)
                 (?:(?:http|https)://){1}
                 # domain name (no port so not authority) (www.example.com)
@@ -49,7 +56,7 @@ def add_markdown_to_links(text=None):
                 # anchor (#SomewhereInTheDocument)
                 (?:\#(?:[a-zA-Z0-9_-]*))?
                 )
-                '''
+                """
 
     return re.sub(regex, _add_a_tag, text, flags=re.VERBOSE)
 

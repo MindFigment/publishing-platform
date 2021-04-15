@@ -1,4 +1,3 @@
 from .settings import *
 
-
-INSTALLED_APPS += ['model_bakery']
+INSTALLED_APPS += ["model_bakery"]

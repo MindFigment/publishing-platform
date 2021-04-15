@@ -1,17 +1,18 @@
 import json
 
+from django.core.paginator import (EmptyPage, InvalidPage, PageNotAnInteger,
+                                   Paginator)
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
-from django.core.paginator import InvalidPage, Paginator, EmptyPage, PageNotAnInteger
 
-from posts.models import Post
 from common.encoders import ExtendedEncoder
+from posts.models import Post
 
 
-@require_http_methods(['GET'])
+@require_http_methods(["GET"])
 def get_detailed_posts(request):
-    page = request.GET.get('page')
-    n = request.GET.get('n')
+    page = request.GET.get("page")
+    n = request.GET.get("n")
     posts = Post.published.all()
     paginator = Paginator(posts, n)
 
@@ -22,7 +23,7 @@ def get_detailed_posts(request):
         posts = paginator.page(1)
     except EmptyPage:
         posts = paginator.page(paginator.num_pages)
-        return JsonResponse({'empty': True})
+        return JsonResponse({"empty": True})
     except InvalidPage:
         posts = paginator.page(1)
 

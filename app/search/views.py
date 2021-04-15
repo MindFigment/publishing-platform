@@ -1,10 +1,12 @@
 import json
+
 from django.shortcuts import render
 
-from .searcher import Searcher
-from .forms import SearchForm
-from .utils import get_search_params
 from common.encoders import ExtendedEncoder
+
+from .forms import SearchForm
+from .searcher import Searcher
+from .utils import get_search_params
 
 
 def search_blogs_and_posts(request):
@@ -15,13 +17,11 @@ def search_blogs_and_posts(request):
     search_posts = False
     search_blogs = False
 
-    if request.GET.get('query', None):
+    if request.GET.get("query", None):
         search_form = SearchForm(request.GET)
         if search_form.is_valid():
             cd = search_form.cleaned_data
-            query, search_models, uni_fields, agg_fields = get_search_params(
-                cd
-            )
+            query, search_models, uni_fields, agg_fields = get_search_params(cd)
 
             if SearchForm.SEARCH_POSTS in search_models:
                 post_searcher = Searcher(
@@ -37,21 +37,27 @@ def search_blogs_and_posts(request):
                 blog_results = blog_searcher.most_similar(20)
                 search_blogs = True
 
-            post_results = [json.dumps(p, cls=ExtendedEncoder)
-                            for p in post_results if p.status == 'published']
+            post_results = [
+                json.dumps(p, cls=ExtendedEncoder)
+                for p in post_results
+                if p.status == "published"
+            ]
 
-            blog_results = [json.dumps(b, cls=ExtendedEncoder)
-                            for b in blog_results if b.is_active]
+            blog_results = [
+                json.dumps(b, cls=ExtendedEncoder) for b in blog_results if b.is_active
+            ]
 
-    return render(request,
-                  'search/search.html',
-                  {
-                      'search_form': search_form,
-                      'query': query,
-                      'post_results': post_results,
-                      'blog_results': blog_results,
-                      'n_posts': len(post_results),
-                      'n_blogs': len(blog_results),
-                      'search_posts': search_posts,
-                      'search_blogs': search_blogs,
-                  })
+    return render(
+        request,
+        "search/search.html",
+        {
+            "search_form": search_form,
+            "query": query,
+            "post_results": post_results,
+            "blog_results": blog_results,
+            "n_posts": len(post_results),
+            "n_blogs": len(blog_results),
+            "search_posts": search_posts,
+            "search_blogs": search_blogs,
+        },
+    )

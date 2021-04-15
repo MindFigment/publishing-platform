@@ -1,4 +1,5 @@
 from django.template.defaultfilters import register
+
 # from django import template
 
 # from posts.models import Post, Section, SubTitle, Title, Text, Citation, Image
@@ -20,7 +21,4 @@ def render_section(section):
     section_type = section.content_object._meta.model_name
     section_object = section.content_object
 
-    return {
-        'section_object': section_object,
-        'section_type': section_type
-    }
+    return {"section_object": section_object, "section_type": section_type}

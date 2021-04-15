@@ -1,12 +1,18 @@
 from django.apps import apps
+from django.contrib.postgres.search import TrigramSimilarity
 from django.db.models import Sum
 from django.db.models.functions import Greatest
 
-from django.contrib.postgres.search import TrigramSimilarity
-
 
 class Searcher:
-    def __init__(self, query_string, search_model, uni_fields=[], agg_fields=[], similarity_threshold=0.2):
+    def __init__(
+        self,
+        query_string,
+        search_model,
+        uni_fields=[],
+        agg_fields=[],
+        similarity_threshold=0.2,
+    ):
         self.query_string = query_string
         self.search_model = search_model
         self.uni_fields = uni_fields
@@ -28,9 +34,13 @@ class Searcher:
         return self.queryset[:n]
 
     def _build_queryset(self):
-        self.queryset = self.model._default_manager.annotate(
-            max_similarity=self._build_max_similarity()
-        ).filter(max_similarity__gt=self.similarity_threshold).order_by('-max_similarity')
+        self.queryset = (
+            self.model._default_manager.annotate(
+                max_similarity=self._build_max_similarity()
+            )
+            .filter(max_similarity__gt=self.similarity_threshold)
+            .order_by("-max_similarity")
+        )
 
     def _build_max_similarity(self):
         if self.n > 1:
@@ -39,9 +49,11 @@ class Searcher:
 
     def _trig_similarities(self):
         trig_similarities = [
-            TrigramSimilarity(f'{field}', f'{self.query_string}') for field in self.uni_fields
+            TrigramSimilarity(f"{field}", f"{self.query_string}")
+            for field in self.uni_fields
         ]
         trig_similarities += [
-            Sum(TrigramSimilarity(f'{field}', f'{self.query_string}')) for field in self.agg_fields
+            Sum(TrigramSimilarity(f"{field}", f"{self.query_string}"))
+            for field in self.agg_fields
         ]
         return trig_similarities

@@ -1,6 +1,5 @@
-from django.core import exceptions
-from django.db import models
 from django.core.exceptions import ObjectDoesNotExist
+from django.db import models
 
 
 class OrderField(models.PositiveIntegerField):
@@ -16,8 +15,10 @@ class OrderField(models.PositiveIntegerField):
                 if self.for_fields:
                     # filter by objects with the same field values
                     # for the fields in "for_fields"
-                    query = {field: getattr(model_instance, field)
-                             for field in self.for_fields}
+                    query = {
+                        field: getattr(model_instance, field)
+                        for field in self.for_fields
+                    }
                     queryset = queryset.filter(**query)
                 # get the order of the last item
                 last_item = queryset.latest(self.attname)

@@ -1,50 +1,44 @@
 from django.test import TestCase
-
 from model_bakery import baker
+
 from blogs.models import FollowRelationship
 
 
 class FollowRelationshipTestCase(TestCase):
     def setUp(self):
-        self.author = baker.make('Profile', user__email='a@gmail.com')
+        self.author = baker.make("Profile", user__email="a@gmail.com")
 
-        self.profile_1 = baker.make('Profile', user__email='b@gmail.com')
-        self.profile_2 = baker.make('Profile', user__email='c@gmail.com')
-        self.profile_3 = baker.make('Profile', user__email='d@gmail.com')
-        self.profile_4 = baker.make('Profile', user__email='e@gmail.com')
-        self.profile_5 = baker.make('Profile', user__email='f@gmail.com')
+        self.profile_1 = baker.make("Profile", user__email="b@gmail.com")
+        self.profile_2 = baker.make("Profile", user__email="c@gmail.com")
+        self.profile_3 = baker.make("Profile", user__email="d@gmail.com")
+        self.profile_4 = baker.make("Profile", user__email="e@gmail.com")
+        self.profile_5 = baker.make("Profile", user__email="f@gmail.com")
 
-        self.blog_1 = baker.make('Blog', title='title1', author=self.author)
-        self.blog_2 = baker.make('Blog', title='title2', author=self.author)
+        self.blog_1 = baker.make("Blog", title="title1", author=self.author)
+        self.blog_2 = baker.make("Blog", title="title2", author=self.author)
 
-        FollowRelationship.objects.bulk_create([
-            # Followers for blog 1
-            FollowRelationship(
-                blog=self.blog_1, profile=self.profile_1, seen=False
-            ),
-            FollowRelationship(
-                blog=self.blog_1, profile=self.profile_2, seen=False
-            ),
-            FollowRelationship(
-                blog=self.blog_1, profile=self.profile_3, seen=True
-            ),
-            FollowRelationship(
-                blog=self.blog_1, profile=self.profile_4, seen=True
-            ),
-            FollowRelationship(
-                blog=self.blog_1, profile=self.profile_5, seen=True
-            ),
-            # Followers for blog 2
-            FollowRelationship(
-                blog=self.blog_2, profile=self.profile_1, seen=True
-            ),
-            FollowRelationship(
-                blog=self.blog_2, profile=self.profile_2, seen=False
-            ),
-            FollowRelationship(
-                blog=self.blog_2, profile=self.profile_3, seen=False
-            )
-        ])
+        FollowRelationship.objects.bulk_create(
+            [
+                # Followers for blog 1
+                FollowRelationship(
+                    blog=self.blog_1, profile=self.profile_1, seen=False
+                ),
+                FollowRelationship(
+                    blog=self.blog_1, profile=self.profile_2, seen=False
+                ),
+                FollowRelationship(blog=self.blog_1, profile=self.profile_3, seen=True),
+                FollowRelationship(blog=self.blog_1, profile=self.profile_4, seen=True),
+                FollowRelationship(blog=self.blog_1, profile=self.profile_5, seen=True),
+                # Followers for blog 2
+                FollowRelationship(blog=self.blog_2, profile=self.profile_1, seen=True),
+                FollowRelationship(
+                    blog=self.blog_2, profile=self.profile_2, seen=False
+                ),
+                FollowRelationship(
+                    blog=self.blog_2, profile=self.profile_3, seen=False
+                ),
+            ]
+        )
 
     def test_followers_properly_added(self):
         self.assertEqual(self.blog_1.followers.count(), 5)

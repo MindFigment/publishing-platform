@@ -4,19 +4,17 @@ from django.db.models.aggregates import Count
 
 class ExtendedManager(models.Manager):
     def names(self):
-        return self.get_queryset().values_list('name', flat=True)
+        return self.get_queryset().values_list("name", flat=True)
 
     def slugs(self):
-        return self.get_queryset().values_list('slug', flat=True)
+        return self.get_queryset().values_list("slug", flat=True)
 
 
 class TaggableManager(models.Manager):
     def get_tags_with_no_tagged_items(self):
         return (
             self.get_queryset()
-            .annotate(
-                tagged_items=Count('taggedblog') + Count('taggedpost')
-            )
+            .annotate(tagged_items=Count("taggedblog") + Count("taggedpost"))
             .filter(tagged_items=0)
         )
 
@@ -29,10 +27,10 @@ class TaggableManager(models.Manager):
         qs.delete()
 
     def _to_tag_model_instances(self, tags):
-        '''
+        """
         Takes an iterable containing either name strings, tags objects,
         or a mixture of both and returns set of tag objects
-        '''
+        """
         str_tags = set()
         tag_objs = set()
 
@@ -43,7 +41,7 @@ class TaggableManager(models.Manager):
                 tag_objs.add(t)
             else:
                 raise ValueError(
-                    'Cannot add {} ({}). Expected {} or str'.format(
+                    "Cannot add {} ({}). Expected {} or str".format(
                         t, type(t), self.model
                     )
                 )

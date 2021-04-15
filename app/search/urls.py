@@ -1,14 +1,10 @@
 from django.urls import path
 
-from . import views
-from . import api
+from . import api, views
 
-
-app_name = 'search'
+app_name = "search"
 
 urlpatterns = [
-    path('', views.search_blogs_and_posts, name='search_blogs_and_posts'),
-    path('posts/similar',
-         api.get_most_similar_posts,
-         name='most_similar_posts'),
+    path("", views.search_blogs_and_posts, name="search_blogs_and_posts"),
+    path("posts/similar", api.get_most_similar_posts, name="most_similar_posts"),
 ]

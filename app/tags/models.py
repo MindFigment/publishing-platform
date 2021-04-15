@@ -13,7 +13,7 @@ class Tag(models.Model):
     tags = TaggableManager()
 
     def __str__(self):
-        return f'{self.name}'
+        return f"{self.name}"
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.name)
@@ -21,11 +21,11 @@ class Tag(models.Model):
 
 
 def tagged_items_changed(action, **kwargs):
-    if action == 'post_delete':
+    if action == "post_delete":
         Tag.tags.get_tags_with_no_tagged_items().delete()
 
 
 # Probably very bad idea to attach these signal handlers, very inefficient.
 # Maybe Redis as cache could be a valid solution?
-m2m_changed.connect(tagged_items_changed, sender='posts.TaggedPost')
-m2m_changed.connect(tagged_items_changed, sender='blogs.TaggedBlog')
+m2m_changed.connect(tagged_items_changed, sender="posts.TaggedPost")
+m2m_changed.connect(tagged_items_changed, sender="blogs.TaggedBlog")

@@ -3,34 +3,36 @@ from django.forms import formset_factory
 
 from tags.forms import TagField
 
-from .models import Post, SubTitle, Text, Image, Citation
+from .models import Citation, Image, Post, SubTitle, Text
 
 
 class PostForm(forms.ModelForm):
     tags = TagField(required=False)
 
     def __init__(self, *args, **kwargs):
-        if 'instance' in kwargs:
-            initial = kwargs.get('initial', {})
-            initial['tags'] = kwargs['instance'].tags.all()
-            kwargs['initial'] = initial
+        if "instance" in kwargs:
+            initial = kwargs.get("initial", {})
+            initial["tags"] = kwargs["instance"].tags.all()
+            kwargs["initial"] = initial
         super().__init__(*args, **kwargs)
 
     class Meta:
         model = Post
-        fields = ('status',)
+        fields = ("status",)
 
 
 class TitleForm(forms.Form):
     order = forms.IntegerField(min_value=0, widget=forms.HiddenInput())
     title = forms.CharField(
-        label='Title',
-        widget=forms.Textarea(attrs={
-            'class': 'form-story-title',
-            'placeholder': 'Story title',
-            'autocomplete': 'off',
-            'rows': 1
-        })
+        label="Title",
+        widget=forms.Textarea(
+            attrs={
+                "class": "form-story-title",
+                "placeholder": "Story title",
+                "autocomplete": "off",
+                "rows": 1,
+            }
+        ),
     )
 
 
@@ -39,14 +41,16 @@ class SubTitleForm(forms.ModelForm):
 
     class Meta:
         model = SubTitle
-        fields = ('subtitle',)
+        fields = ("subtitle",)
         widgets = {
-            'subtitle': forms.Textarea(attrs={
-                'class': 'form-story-subtitle',
-                'placeholder': 'Subtitle',
-                'autocomplete': 'off',
-                'rows': 1
-            })
+            "subtitle": forms.Textarea(
+                attrs={
+                    "class": "form-story-subtitle",
+                    "placeholder": "Subtitle",
+                    "autocomplete": "off",
+                    "rows": 1,
+                }
+            )
         }
 
 
@@ -58,14 +62,16 @@ class TextForm(forms.ModelForm):
 
     class Meta:
         model = Text
-        fields = ('text',)
+        fields = ("text",)
         widgets = {
-            'text': forms.Textarea(attrs={
-                'class': 'form-story-text',
-                'placeholder': 'Text',
-                'autocomplete': 'off',
-                'rows': 1
-            })
+            "text": forms.Textarea(
+                attrs={
+                    "class": "form-story-text",
+                    "placeholder": "Text",
+                    "autocomplete": "off",
+                    "rows": 1,
+                }
+            )
         }
 
     def save(self, commit=True):
@@ -80,14 +86,16 @@ class CitationForm(forms.ModelForm):
 
     class Meta:
         model = Citation
-        fields = ('citation',)
+        fields = ("citation",)
         widgets = {
-            'citation': forms.Textarea(attrs={
-                'class': 'form-story-citation',
-                'placeholder': 'Citation',
-                'autocomplete': 'off',
-                'rows': 1
-            })
+            "citation": forms.Textarea(
+                attrs={
+                    "class": "form-story-citation",
+                    "placeholder": "Citation",
+                    "autocomplete": "off",
+                    "rows": 1,
+                }
+            )
         }
 
 
@@ -99,8 +107,8 @@ class ImageForm(forms.ModelForm):
 
     class Meta:
         model = Image
-        fields = ('file',)
-        required = ('file',)
+        fields = ("file",)
+        required = ("file",)
 
 
 ImageFormset = formset_factory(ImageForm, extra=0)

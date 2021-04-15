@@ -4,8 +4,7 @@ from posts.models import Post
 
 
 class Comment(models.Model):
-    post = models.ForeignKey(
-        Post, on_delete=models.CASCADE, related_name='comments')
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="comments")
     name = models.CharField(max_length=30)
     email = models.EmailField()
     body = models.TextField()
@@ -14,7 +13,7 @@ class Comment(models.Model):
     active = models.BooleanField(default=True)
 
     class Meta:
-        ordering = ('created',)
+        ordering = ("created",)
 
     def __str__(self):
-        return f'Comment made by {self.name} under {self.post} post.'
+        return f"Comment made by {self.name} under {self.post} post."
