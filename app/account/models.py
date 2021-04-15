@@ -5,10 +5,10 @@ from django.urls import reverse
 from django.db.models import Count
 from django.apps import apps
 
-# from django.contrib.auth.models import User
+from django.contrib.auth.models import User
 
 
-# User._meta.get_field('email')._unique = True
+User._meta.get_field('email')._unique = True
 
 
 class Profile(models.Model):
