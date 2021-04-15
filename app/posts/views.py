@@ -11,8 +11,14 @@ from blogs.models import Blog
 from common.utils import unique_slugify
 from tags.models import Tag
 
-from .forms import (CitationFormset, ImageFormset, PostForm, SubTitleFormset,
-                    TextFormset, TitleForm)
+from .forms import (
+    CitationFormset,
+    ImageFormset,
+    PostForm,
+    SubTitleFormset,
+    TextFormset,
+    TitleForm,
+)
 from .models import Citation, Image, Post, Section, SubTitle, Text, Title
 
 
@@ -124,13 +130,14 @@ def edit_post(request, post_slug):
             subtitle_objects = []
             for subtitle_form in subtitle_formset:
                 subtitle_cd = subtitle_form.cleaned_data
-                subtitle = subtitle_cd["subtitle"]
-                subtitle_order = subtitle_cd["order"]
-                subtitle_object = SubTitle(subtitle=subtitle)
-                subtitle_objects.append(subtitle_object)
-                sections.append(
-                    {"content_object": subtitle_object, "order": subtitle_order}
-                )
+                if subtitle_cd:
+                    subtitle = subtitle_cd["subtitle"]
+                    subtitle_order = subtitle_cd["order"]
+                    subtitle_object = SubTitle(subtitle=subtitle)
+                    subtitle_objects.append(subtitle_object)
+                    sections.append(
+                        {"content_object": subtitle_object, "order": subtitle_order}
+                    )
 
             text_objects = []
             for text_form in text_formset:
@@ -145,28 +152,30 @@ def edit_post(request, post_slug):
             citation_objects = []
             for citation_form in citation_formset:
                 citation_cd = citation_form.cleaned_data
-                citation = citation_cd["citation"]
-                citation_order = citation_cd["order"]
-                citation_object = Citation(citation=citation)
+                if citation_cd:
+                    citation = citation_cd["citation"]
+                    citation_order = citation_cd["order"]
+                    citation_object = Citation(citation=citation)
 
-                citation_objects.append(citation_object)
-                sections.append(
-                    {"content_object": citation_object, "order": citation_order}
-                )
+                    citation_objects.append(citation_object)
+                    sections.append(
+                        {"content_object": citation_object, "order": citation_order}
+                    )
 
             image_objects = []
             if image_formset.is_valid():
                 image_objects = []
                 for image_form in image_formset:
                     image_cd = image_form.cleaned_data
-                    file = image_cd["file"]
-                    file_order = image_cd["order"]
-                    file_object = Image(file=file)
+                    if image_cd:
+                        file = image_cd["file"]
+                        file_order = image_cd["order"]
+                        file_object = Image(file=file)
 
-                    image_objects.append(file_object)
-                    sections.append(
-                        {"content_object": file_object, "order": file_order}
-                    )
+                        image_objects.append(file_object)
+                        sections.append(
+                            {"content_object": file_object, "order": file_order}
+                        )
 
             try:
                 with transaction.atomic():
@@ -287,45 +296,53 @@ def create_post(request, blog_id):
             subtitle_objects = []
             for subtitle_form in subtitle_formset:
                 subtitle_cd = subtitle_form.cleaned_data
-                subtitle = subtitle_cd["subtitle"]
-                subtitle_order = subtitle_cd["order"]
-                subtitle_object = SubTitle(subtitle=subtitle)
-                subtitle_objects.append(subtitle_object)
-                sections.append(
-                    {"content_object": subtitle_object, "order": subtitle_order}
-                )
+                if subtitle_cd:
+                    subtitle = subtitle_cd["subtitle"]
+                    subtitle_order = subtitle_cd["order"]
+                    subtitle_object = SubTitle(subtitle=subtitle)
+                    subtitle_objects.append(subtitle_object)
+                    sections.append(
+                        {"content_object": subtitle_object, "order": subtitle_order}
+                    )
 
             text_objects = []
             for text_form in text_formset:
                 text_cd = text_form.cleaned_data
-                text = text_cd["text"]
-                text_order = text_cd["order"]
-                text_object = Text(text=text)
+                if text_cd:
+                    text = text_cd["text"]
+                    text_order = text_cd["order"]
+                    text_object = Text(text=text)
 
-                text_objects.append(text_object)
-                sections.append({"content_object": text_object, "order": text_order})
+                    text_objects.append(text_object)
+                    sections.append(
+                        {"content_object": text_object, "order": text_order}
+                    )
 
             citation_objects = []
             for citation_form in citation_formset:
                 citation_cd = citation_form.cleaned_data
-                citation = citation_cd["citation"]
-                citation_order = citation_cd["order"]
-                citation_object = Citation(citation=citation)
+                if citation_cd:
+                    citation = citation_cd["citation"]
+                    citation_order = citation_cd["order"]
+                    citation_object = Citation(citation=citation)
 
-                citation_objects.append(citation_object)
-                sections.append(
-                    {"content_object": citation_object, "order": citation_order}
-                )
+                    citation_objects.append(citation_object)
+                    sections.append(
+                        {"content_object": citation_object, "order": citation_order}
+                    )
 
             image_objects = []
             for image_form in image_formset:
                 image_cd = image_form.cleaned_data
-                file = image_cd["file"]
-                file_order = image_cd["order"]
-                file_object = Image(file=file)
+                if image_cd:
+                    file = image_cd["file"]
+                    file_order = image_cd["order"]
+                    file_object = Image(file=file)
 
-                image_objects.append(file_object)
-                sections.append({"content_object": file_object, "order": file_order})
+                    image_objects.append(file_object)
+                    sections.append(
+                        {"content_object": file_object, "order": file_order}
+                    )
 
             try:
                 with transaction.atomic():

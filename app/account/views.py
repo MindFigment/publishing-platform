@@ -10,8 +10,7 @@ from django.views.decorators.http import require_GET
 from common.encoders import ExtendedEncoder
 from posts.models import Post
 
-from .forms import (LoginForm, ProfileEditForm, UserEditForm,
-                    UserRegistrationForm)
+from .forms import LoginForm, ProfileEditForm, UserEditForm, UserRegistrationForm
 from .models import Profile
 
 

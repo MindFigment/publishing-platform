@@ -2,8 +2,7 @@ import json
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.core.paginator import (EmptyPage, InvalidPage, PageNotAnInteger,
-                                   Paginator)
+from django.core.paginator import EmptyPage, InvalidPage, PageNotAnInteger, Paginator
 from django.http.response import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.csrf import ensure_csrf_cookie

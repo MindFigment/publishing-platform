@@ -1,7 +1,6 @@
 import json
 
-from django.core.paginator import (EmptyPage, InvalidPage, PageNotAnInteger,
-                                   Paginator)
+from django.core.paginator import EmptyPage, InvalidPage, PageNotAnInteger, Paginator
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 
