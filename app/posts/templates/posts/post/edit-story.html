@@ -89,29 +89,6 @@ Blog {{ blog.title }} by {{ blog.author }}
       </div>
       {% endfor %}
 
-
-      <!-- {% for form in sorted_forms %}
-        <div class="story-content__item" draggable="true">
-          <div class="item__wrapper">
-            {% if form.type == "title" %}
-              {{ form.form.title }}
-            {% elif form.type == "text" %}
-              {{ form.form.text }}
-            {% elif form.type == "citation" %}
-              {{ form.form.citation }}
-            {% elif form.type == "image" %}
-              {{ form.form.file }}
-            {% endif %}
-
-            {{ form.form.order }}
-
-            {% if form.type != "title" %}
-              <input type="button" value="x" class="button-remove delete">
-            {% endif %}
-          </div>
-        </div>
-      {% endfor %} -->
-
     </div>
 
     <div id="empty-subtitle-form" style="display:none">

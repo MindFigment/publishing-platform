@@ -84,9 +84,10 @@ def edit_post(request, post_slug):
         )
         image_formset = ImageFormset(
             initial=post.get_image_sections(),
-            prefix=IMAGE_PREFIX
+            prefix=IMAGE_PREFIX,
         )
     elif request.method == 'POST':
+
         post_form = PostForm(request.POST)
         title_form = TitleForm(request.POST)
         subtitle_formset = SubTitleFormset(
@@ -258,6 +259,7 @@ def create_post(request, blog_id):
         image_formset = ImageFormset(
             data=request.POST or None, files=request.FILES or None, prefix=IMAGE_PREFIX
         )
+
         if post_form.is_valid() and title_form.is_valid() and subtitle_formset.is_valid() and text_formset.is_valid() and image_formset.is_valid() and citation_formset.is_valid():
             post_cd = post_form.cleaned_data
             post_status = post_cd['status']

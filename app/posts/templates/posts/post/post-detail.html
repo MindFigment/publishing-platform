@@ -21,7 +21,7 @@
     {% for section in post.sections.all %}
         {% render_section section %}
         {% if section.content_object.title %}
-            <div class="post-card__avatar author-image bigger">
+            <div class="post-card__avatar author-image bigger margin-bottom">
                 <a href="{{ post.blog.author.get_absolute_url }}">
                     <img src="{{ post.blog.author.photo.url }}">
                 </a>

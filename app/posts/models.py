@@ -259,7 +259,7 @@ class Citation(ContentBase):
 
 
 class Image(ContentBase):
-    file = models.FileField(upload_to=get_post_image_dir_path)
+    file = models.ImageField(upload_to=get_post_image_dir_path)
 
     @ property
     def content(self):

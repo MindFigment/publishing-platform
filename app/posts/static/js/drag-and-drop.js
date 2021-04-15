@@ -112,17 +112,3 @@ function applyDragAndDropListeners(item) {
   // item.addEventListener('dragleave', dragLeaveHandler, false);
   item.addEventListener('drop', dropHandler, false);
 }
-
-function setStoryItemOrderBeforeSubmit(event) {
-  let orderInps = Array.from(
-    storyContent.querySelectorAll('.item__wrapper input[type="hidden"]')
-  );
-  let order = 0;
-  orderInps.forEach((orderInp) => {
-    orderInp.value = order;
-    order++;
-  });
-}
-
-const submitStoryInp = document.querySelector('#story-form');
-submitStoryInp.addEventListener('submit', setStoryItemOrderBeforeSubmit, false);
