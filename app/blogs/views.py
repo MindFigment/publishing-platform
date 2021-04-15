@@ -63,7 +63,6 @@ def new_blog(request):
                           {'blog': new_blog})
     else:
         blog_form = NewBlogForm()
-        print(blog_form)
     return render(request,
                   'blogs/blog/blog-new.html',
                   {'blog_form': blog_form})

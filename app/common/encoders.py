@@ -80,7 +80,6 @@ def _encode_blog(o):
 
     created = datetime.strftime(o.created, '%b %d, %Y')
     blog = model_to_dict(o)
-    print('blog', blog)
 
     blog_image = ''
     if o.image:

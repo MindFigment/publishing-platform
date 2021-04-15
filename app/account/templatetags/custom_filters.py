@@ -11,7 +11,6 @@ register = template.Library()
 
 @register.filter
 def html_links(value):
-    print('value', value)
     return mark_safe(add_markdown_to_links(escape(value)))
 
 

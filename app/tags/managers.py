@@ -1,8 +1,6 @@
 from django.db import models
 from django.db.models.aggregates import Count
 
-from .utils import require_instance_manager
-
 
 class ExtendedManager(models.Manager):
     def names(self):
@@ -29,9 +27,6 @@ class TaggableManager(models.Manager):
     def remove(self, *tags):
         qs = self.get_queryset().filter(name__in=tags)
         qs.delete()
-
-    # @require_instance_manager
-    # def similar_items(self):
 
     def _to_tag_model_instances(self, tags):
         '''

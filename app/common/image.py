@@ -3,7 +3,6 @@ from django.urls import reverse
 
 
 def get_image_preview(obj, image_field_name='image', alt_field_name='title'):
-    print(obj.__dict__)
     HTML_IMG_LINK_TEMPLATE = '''
         <a href="{src}">
             <img src="{src}" alt="{alt} width="150" height="150" />

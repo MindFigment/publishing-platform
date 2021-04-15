@@ -17,9 +17,6 @@ def model_name(obj):
 
 @register.inclusion_tag("posts/sections/sections.html", takes_context=False)
 def render_section(section):
-
-    print('section tag', section)
-
     section_type = section.content_object._meta.model_name
     section_object = section.content_object
 

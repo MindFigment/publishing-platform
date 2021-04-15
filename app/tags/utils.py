@@ -21,7 +21,6 @@ def _get_matched(tup):
 
 def format_tags_into_string(tags):
     names = []
-    print('format tags:', tags)
     for tag in tags:
         name = tag.name
         if ',' in name or ' ' in name:
@@ -30,13 +29,6 @@ def format_tags_into_string(tags):
             names.append(name)
     return ', '.join(sorted(names))
 
-
-# def split_strip(string, delimeter=','):
-#     if not string:
-#         return []
-
-#     words = [w.strip() for w in string.split(delimeter)]
-#     return [w for w in words if w]
 
 def require_instance_manager(func):
     @wraps(func)
