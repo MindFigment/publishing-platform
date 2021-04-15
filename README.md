@@ -23,16 +23,16 @@ $ docker-compose up -d --build
 ```
 After that, navigate in web browser to http://localhost:8000/
 
-Default database with some data was prepared
+Default database with some data was prepared for you.
 You can create your own account or use one of the following:
 
-username: mindfigment
+username: mindfigment\
 password mindfigment
 
-username: lisa
+username: lisa\
 password: lisa
 
-username: hania
+username: hania\
 password: hania
 
 To stop and remove docker containers run
