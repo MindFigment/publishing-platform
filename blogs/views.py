@@ -45,7 +45,7 @@ def blog_ajax_list(request):
 
 def blog_detail(request, slug):
     blog = Blog.objects.get(slug=slug)
-    posts = blog.posts.all().prefetch_related('sections')
+    posts = blog.posts.filter(status='published').prefetch_related('sections')
     return render(request, 'blogs/blog/blog-detail.html',
                   {'blog': blog,
                    'posts': posts})
@@ -53,7 +53,6 @@ def blog_detail(request, slug):
 
 @login_required
 def new_blog(request):
-    print('New blog', request)
     if request.method == 'POST':
         blog_form = NewBlogForm(data=request.POST,
                                 files=request.FILES)
@@ -116,7 +115,6 @@ def blog_follow(request):
     post_data = json.loads(request.body.decode('utf-8'))
     blog_id = post_data.get('id')
     action = post_data.get('action')
-    print(blog_id, action)
     if blog_id and action:
         try:
             blog = Blog.objects.get(id=blog_id)
@@ -133,7 +131,6 @@ def blog_follow(request):
             return JsonResponse({'status': 'ok'})
         except Blog.DoesNotExist:
             return JsonResponse({'status': 'error'})
-    print(':(')
     return JsonResponse({'status': 'error'})
 
 
@@ -145,10 +142,7 @@ def blog_followers(request, slug):
     new_followers = blog.get_new_followers()
     all_followers = new_followers | old_followers
 
-    print('new followers', new_followers)
-    print('old followers', old_followers)
-
-    paginator = Paginator(all_followers, 5)
+    paginator = Paginator(all_followers, 15)
 
     is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
 

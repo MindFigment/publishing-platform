@@ -6,7 +6,7 @@ from django.contrib.postgres.search import TrigramSimilarity
 
 
 class Searcher:
-    def __init__(self, query_string, search_model, uni_fields=[], agg_fields=[], similarity_threshold=0.1):
+    def __init__(self, query_string, search_model, uni_fields=[], agg_fields=[], similarity_threshold=0.2):
         self.query_string = query_string
         self.search_model = search_model
         self.uni_fields = uni_fields

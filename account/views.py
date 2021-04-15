@@ -2,7 +2,7 @@ import json
 from posts.models import Post
 from django.core.paginator import EmptyPage, InvalidPage, Paginator
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.views.decorators.http import require_GET
 
 from django.contrib.auth import authenticate, login
@@ -89,6 +89,9 @@ def edit(request):
         if user_form.is_valid() and profile_form.is_valid():
             user_form.save()
             profile_form.save()
+            return render(request,
+                          'account/profile/detail.html',
+                          {'profile': request.user.profile})
     else:
         user_form = UserEditForm(instance=request.user)
         profile_form = ProfileEditForm(
@@ -113,7 +116,7 @@ def user_followers(request):
     profile = request.user.profile
     old_followers, new_followers = profile.get_old_and_new_followers()
     all_followers = new_followers | old_followers
-    paginator = Paginator(all_followers, 5)
+    paginator = Paginator(all_followers, 20)
 
     is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
 

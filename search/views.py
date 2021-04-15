@@ -38,10 +38,10 @@ def search_blogs_and_posts(request):
                 search_blogs = True
 
             post_results = [json.dumps(p, cls=ExtendedEncoder)
-                            for p in post_results]
+                            for p in post_results if p.status == 'published']
 
             blog_results = [json.dumps(b, cls=ExtendedEncoder)
-                            for b in blog_results]
+                            for b in blog_results if b.is_active]
 
     return render(request,
                   'search/search.html',

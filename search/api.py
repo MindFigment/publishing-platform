@@ -28,6 +28,6 @@ def get_most_similar_posts(request):
     # we are searching against
     similar_posts = searcher.most_similar(n + 1)
     similar_posts = [json.dumps(p, cls=ExtendedEncoder)
-                     for p in similar_posts if p.id != post.id]
+                     for p in similar_posts if p.id != post.id and p.status == 'published']
 
     return JsonResponse(similar_posts, safe=False)

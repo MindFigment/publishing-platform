@@ -2,7 +2,7 @@ const followBtn = document.querySelector('.follow.button');
 const totalFollowersSpan = document.querySelector('.count .total');
 
 async function followHandler(event) {
-  let url = 'http://127.0.0.1:8000/blogs/follow/';
+  let url = 'http://localhost:8000/blogs/follow/';
   let body = {
     id: this.dataset.id,
     action: this.dataset.action,

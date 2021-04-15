@@ -28,15 +28,16 @@ def post_card(post):
 
     first_paragraph = post_sections.filter(
         Q(content_type__model=TEXT_MODEL_NAME) | Q(content_type__model=CITATION_MODEL_NAME)).first()
+
     if not first_paragraph:
         body = ''
         type = TEXT_MODEL_NAME
     else:
-        type = TEXT_MODEL_NAME if first_paragraph.content_type._meta.model_name == TEXT_MODEL_NAME else CITATION_MODEL_NAME
+        type = TEXT_MODEL_NAME if first_paragraph.content_object._meta.model_name == TEXT_MODEL_NAME else CITATION_MODEL_NAME
         if type == TEXT_MODEL_NAME:
             body = first_paragraph.content_object.text
         else:
-            body = first_paragraph.content_object.text
+            body = first_paragraph.content_object.citation
 
     return {
         'post': post,

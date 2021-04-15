@@ -1,6 +1,6 @@
 from django.db import models
 from django.conf import settings
-from django.db.models.expressions import Expression, F, Value
+from django.db.models.expressions import F
 from django.urls import reverse
 from django.db.models import Count
 from django.apps import apps

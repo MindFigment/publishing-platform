@@ -3,7 +3,7 @@ let page = 1;
 let n = 6;
 let blockRequest = false;
 let margin = 200;
-const url = 'http://127.0.0.1:8000/blogs/detailed';
+const url = 'http://localhost:8000/blogs/detailed';
 
 async function getNextBlogsHandler() {
   let fireFetch =

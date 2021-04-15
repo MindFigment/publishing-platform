@@ -1,4 +1,4 @@
 from .settings import *
 
 
-INSTALLED_APPS += ['tags.tests', 'model_bakery']
+INSTALLED_APPS += ['model_bakery']
