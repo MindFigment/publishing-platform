@@ -22,6 +22,7 @@ $ cd publishing-platform
 $ docker-compose up -d --build 
 ```
 After that, navigate in web browser to http://localhost:8000/
+
 Default database with some data was prepared
 You can create your own account or use one of the following:
 
@@ -33,3 +34,9 @@ password: lisa
 
 username: hania
 password: hania
+
+To stop and remove docker containers run
+
+```
+$ docker-compose down -v
+```
